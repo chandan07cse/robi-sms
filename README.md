@@ -161,23 +161,33 @@ The dashboard provides:
 
 ### Programmatic Usage (Without Dashboard)
 
+**Note:** The `sender` parameter is optional in all methods. If not provided, it will automatically use the default sender from:
+1. Database settings (if configured via dashboard)
+2. Config file (`config/adarearch.php`)
+3. Environment variable (`ADAREARCH_SENDER`)
+
 #### 1. Using the Facade
 
 ```php
 use AdaReach\Sms\Facades\AdaReach;
 
-// Send single SMS
+// Send single SMS (sender loaded from config/database)
+$result = AdaReach::sendSingle(
+    receiver: '01712345678',
+    message: 'Hello from AdaReach SMS!'
+);
+
+// Or specify a custom sender
 $result = AdaReach::sendSingle(
     receiver: '01712345678',
     message: 'Hello from AdaReach SMS!',
-    sender: '880XXXXXXXXXX'
+    sender: '880XXXXXXXXXX'  // Optional: override default sender
 );
 
-// Send bulk SMS
+// Send bulk SMS (sender loaded from config/database)
 $result = AdaReach::sendBulk(
     receivers: ['01712345678', '01812345678'],
-    message: 'Bulk message to all recipients',
-    sender: '880XXXXXXXXXX'
+    message: 'Bulk message to all recipients'
 );
 
 // Check balance
@@ -221,14 +231,19 @@ use AdaReach\Sms\SmsBuilder;
 
 $sms = new SmsBuilder();
 
-$result = $sms->sender('880XXXXXXXXXX')
-    ->to('01712345678')
+// Send with default sender from config/database
+$result = $sms->to('01712345678')
     ->message('Hello from SMS Builder!')
     ->send();
 
-// Or with multiple recipients
+// Or specify a custom sender
 $result = $sms->sender('880XXXXXXXXXX')
-    ->to(['01712345678', '01812345678'])
+    ->to('01712345678')
+    ->message('Hello with custom sender!')
+    ->send();
+
+// Send to multiple recipients
+$result = $sms->to(['01712345678', '01812345678'])
     ->message('Bulk message via builder')
     ->send();
 ```
@@ -532,7 +547,8 @@ Event::listen(\AdaReach\Sms\Events\SmsFailed::class, function ($event) {
 use AdaReach\Sms\Exceptions\AdaReachException;
 
 try {
-    $result = AdaReach::sendSingle('01712345678', 'Hello!', '880XXXXXXXXXX');
+    // Sender automatically loaded from config/database
+    $result = AdaReach::sendSingle('01712345678', 'Hello!');
 } catch (AdaReachException $e) {
     // Handle API errors
     echo "Error Code: " . $e->getCode() . "\n";
@@ -576,10 +592,10 @@ public function sendWelcomeSms(User $user)
 {
     $message = "Welcome {$user->name}! Thank you for registering.";
     
+    // Sender automatically loaded from config/database
     return AdaReach::sendSingle(
         receiver: $user->phone,
-        message: $message,
-        sender: config('adarearch.default_sender')
+        message: $message
     );
 }
 ```
@@ -597,10 +613,10 @@ public function sendPromotionalSms()
     
     $message = "🎉 50% OFF on all products! Visit our store today.";
     
+    // Sender automatically loaded from config/database
     return AdaReach::sendBulk(
         receivers: $customers,
-        message: $message,
-        sender: config('adarearch.default_sender')
+        message: $message
     );
 }
 ```
@@ -619,10 +635,10 @@ public function sendOtp(string $phone)
     
     $message = "Your OTP is: {$otp}. Valid for 5 minutes.";
     
+    // Sender automatically loaded from config/database
     return AdaReach::sendSingle(
         receiver: $phone,
-        message: $message,
-        sender: config('adarearch.default_sender')
+        message: $message
     );
 }
 ```
@@ -646,11 +662,10 @@ public function sendWithBalanceCheck(array $phones, string $message)
         throw new \Exception("Insufficient balance. Required: {$requiredBalance} BDT");
     }
     
-    // Send SMS
+    // Send SMS (sender loaded from config/database)
     return AdaReach::sendBulk(
         receivers: $phones,
-        message: $message,
-        sender: config('adarearch.default_sender')
+        message: $message
     );
 }
 ```
