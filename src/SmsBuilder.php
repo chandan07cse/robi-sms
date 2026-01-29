@@ -159,14 +159,14 @@ class SmsBuilder
             return $msisdn;
         }
 
-        // If starts with 01, prepend 880
+        // If starts with 01, remove the 0 and prepend 880
         if (str_starts_with($msisdn, '01')) {
-            return '880' . $msisdn;
+            return '880' . substr($msisdn, 1);  // Remove leading 0
         }
 
-        // If starts with 1, prepend 8801
-        if (str_starts_with($msisdn, '1')) {
-            return '8801' . $msisdn;
+        // If starts with 1 (without 0), prepend 880
+        if (str_starts_with($msisdn, '1') && strlen($msisdn) == 10) {
+            return '880' . $msisdn;
         }
 
         return $msisdn;

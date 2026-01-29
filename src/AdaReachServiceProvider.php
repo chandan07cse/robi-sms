@@ -3,6 +3,8 @@
 namespace AdaReach\Sms;
 
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Facades\Route;
+use AdaReach\Sms\Storage\SmsRepository;
 
 class AdaReachServiceProvider extends ServiceProvider
 {
@@ -22,6 +24,14 @@ class AdaReachServiceProvider extends ServiceProvider
                 config('adarearch.base_url')
             );
         });
+
+        $this->app->singleton(SmsRepository::class, function ($app) {
+            return new SmsRepository();
+        });
+
+        $this->app->singleton(AdaReachClient::class, function ($app) {
+            return app('adarearch');
+        });
     }
 
     /**
@@ -29,10 +39,31 @@ class AdaReachServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        $this->loadViewsFrom(__DIR__.'/../resources/views', 'adarearch');
+        $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
+
+        // Register middleware
+        $router = $this->app['router'];
+        $router->aliasMiddleware('adarearch.auth', \AdaReach\Sms\Http\Middleware\DashboardAuth::class);
+
         if ($this->app->runningInConsole()) {
             $this->publishes([
                 __DIR__.'/../config/adarearch.php' => config_path('adarearch.php'),
             ], 'adarearch-config');
+
+            $this->publishes([
+                __DIR__.'/../resources/views' => resource_path('views/vendor/adarearch'),
+            ], 'adarearch-views');
+
+            $this->publishes([
+                __DIR__.'/../public' => public_path('vendor/adarearch'),
+            ], 'adarearch-assets');
+
+            $this->commands([
+                \AdaReach\Sms\Console\Commands\DashboardServeCommand::class,
+                \AdaReach\Sms\Console\Commands\CleanupCommand::class,
+                \AdaReach\Sms\Console\Commands\GeneratePasswordCommand::class,
+            ]);
         }
     }
 }

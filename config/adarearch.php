@@ -39,4 +39,58 @@ return [
 
     'default_sender' => env('ADAREARCH_DEFAULT_SENDER'),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Dashboard Settings
+    |--------------------------------------------------------------------------
+    |
+    | Settings for the SMS Dashboard (similar to Telescope/Horizon)
+    |
+    */
+
+    'dashboard' => [
+        'enabled' => env('ADAREARCH_DASHBOARD_ENABLED', true),
+        'port' => env('ADAREARCH_DASHBOARD_PORT', 8090),
+        'path' => env('ADAREARCH_DASHBOARD_PATH', 'sms-dashboard'),
+        'middleware' => ['web'],
+        'socket_io_port' => env('SOCKET_IO_SERVER_PORT', 3000),
+        
+        // Authentication settings
+        'auth_enabled' => env('ADAREARCH_AUTH_ENABLED', true),
+        'username' => env('ADAREARCH_DASHBOARD_USERNAME', 'admin'),
+        'password' => env('ADAREARCH_DASHBOARD_PASSWORD'), // Hashed password
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Redis Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Redis settings for storing SMS logs and analytics data
+    |
+    */
+
+    'redis' => [
+        'connection' => env('ADAREARCH_REDIS_CONNECTION', 'default'),
+        'prefix' => env('ADAREARCH_REDIS_PREFIX', 'adarearch:'),
+        'retention_days' => env('ADAREARCH_RETENTION_DAYS', 30),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Logging Configuration
+    |--------------------------------------------------------------------------
+    |
+    | Configure what gets logged to the dashboard
+    |
+    */
+
+    'logging' => [
+        'enabled' => env('ADAREARCH_LOGGING_ENABLED', true),
+        'log_successful' => true,
+        'log_failed' => true,
+        'log_queries' => true,
+    ],
+
 ];
+

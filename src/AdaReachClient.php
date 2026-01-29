@@ -3,6 +3,7 @@
 namespace AdaReach\Sms;
 
 use AdaReach\Sms\Exceptions\AdaReachException;
+use AdaReach\Sms\Models\Setting;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Cache;
 
@@ -14,11 +15,12 @@ class AdaReachClient
     protected ?string $token = null;
     protected ?string $refreshToken = null;
 
-    public function __construct(string $username, string $password, string $baseUrl = 'https://api.mobireach.com.bd')
+    public function __construct(string $username = null, string $password = null, string $baseUrl = null)
     {
-        $this->username = $username;
-        $this->password = $password;
-        $this->baseUrl = rtrim($baseUrl, '/');
+        // Try to load from database settings first, fallback to config
+        $this->username = $username ?? Setting::get('api_username') ?? config('adarearch.username');
+        $this->password = $password ?? Setting::get('api_password') ?? config('adarearch.password');
+        $this->baseUrl = rtrim($baseUrl ?? Setting::get('api_base_url') ?? config('adarearch.base_url'), '/');
         
         $this->loadTokensFromCache();
     }
