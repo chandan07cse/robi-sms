@@ -100,23 +100,34 @@
             const data = Object.fromEntries(formData);
 
             try {
+                // Get fresh CSRF token
+                const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
+                
                 const response = await fetch('{{ url(config("adarearch.dashboard.path", "sms-dashboard") . "/login") }}', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
+                        'X-CSRF-TOKEN': csrfToken,
                         'Accept': 'application/json'
                     },
+                    credentials: 'same-origin',
                     body: JSON.stringify(data)
                 });
 
                 const result = await response.json();
 
-                if (result.success) {
+                if (response.ok && result.success) {
                     window.location.href = result.redirect;
                 } else {
                     // Show error
-                    errorText.textContent = result.message || 'Invalid credentials';
+                    let errorMessage = result.message || 'Invalid credentials';
+                    
+                    // Handle CSRF token mismatch specifically
+                    if (response.status === 419) {
+                        errorMessage = 'Session expired. Please refresh the page and try again.';
+                    }
+                    
+                    errorText.textContent = errorMessage;
                     errorDiv.classList.remove('hidden');
                     
                     // Reset button

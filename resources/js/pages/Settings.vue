@@ -353,9 +353,19 @@ const saveSettings = async () => {
       editMode.value = false;
     }
   } catch (error) {
+    let errorMessage = 'Failed to save settings';
+    
+    if (error.response?.status === 419) {
+      errorMessage = 'Session expired. Please refresh the page and try again.';
+    } else if (error.response?.data?.message) {
+      errorMessage = error.response.data.message;
+    } else if (error.message) {
+      errorMessage = error.message;
+    }
+    
     connectionStatus.value = {
       success: false,
-      message: error.response?.data?.message || 'Failed to save settings'
+      message: errorMessage
     };
   } finally {
     saving.value = false;
@@ -384,9 +394,19 @@ const testConnection = async () => {
       };
     }
   } catch (error) {
+    let errorMessage = 'Connection failed';
+    
+    if (error.response?.status === 419) {
+      errorMessage = 'Session expired. Please refresh the page and try again.';
+    } else if (error.response?.data?.message) {
+      errorMessage = error.response.data.message;
+    } else if (error.message) {
+      errorMessage = error.message;
+    }
+    
     connectionStatus.value = {
       success: false,
-      message: error.response?.data?.message || 'Connection failed'
+      message: errorMessage
     };
   } finally {
     testing.value = false;
