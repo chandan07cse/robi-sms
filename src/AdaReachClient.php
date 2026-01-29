@@ -36,9 +36,13 @@ class AdaReachClient
         ]);
 
         if ($response->failed()) {
+            $errorMessage = $response->json('message') 
+                ?? $response->json('description') 
+                ?? 'Failed to generate token';
+                
             throw new AdaReachException(
-                $response->json('message', 'Failed to generate token'),
-                $response->status()
+                $errorMessage,
+                $response->json('errorCode', $response->status())
             );
         }
 
@@ -134,9 +138,13 @@ class AdaReachClient
             ]);
 
         if ($response->failed()) {
+            $errorMessage = $response->json('message') 
+                ?? $response->json('description') 
+                ?? 'Failed to check balance';
+                
             throw new AdaReachException(
-                'Failed to check balance',
-                $response->status()
+                $errorMessage,
+                $response->json('errorCode', $response->status())
             );
         }
 

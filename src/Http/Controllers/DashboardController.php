@@ -470,7 +470,31 @@ class DashboardController extends Controller
     public function testConnection()
     {
         try {
-            $client = app(AdaReachClient::class);
+            // Create a new client with current settings to test
+            $username = \AdaReach\Sms\Models\Setting::get('api_username') ?? config('adarearch.username');
+            $password = \AdaReach\Sms\Models\Setting::get('api_password') ?? config('adarearch.password');
+            $baseUrl = \AdaReach\Sms\Models\Setting::get('api_base_url') ?? config('adarearch.base_url');
+
+            if (!$username || !$password) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'API credentials not configured'
+                ], 400);
+            }
+
+            $client = new AdaReachClient($username, $password, $baseUrl);
+            
+            // Try to generate token first
+            try {
+                $client->generateToken();
+            } catch (\Exception $e) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Authentication failed: ' . $e->getMessage()
+                ], 401);
+            }
+            
+            // If token generation succeeds, check balance
             $balance = $client->checkBalance();
 
             return response()->json([

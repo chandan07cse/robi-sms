@@ -25,7 +25,7 @@ return [
     |
     */
 
-    'base_url' => env('ADAREARCH_BASE_URL', 'https://api.mobireach.com.bd'),
+    'base_url' => env('ADAREARCH_BASE_URL', 'https://api.mobireach.com.bd/api'),
 
     /*
     |--------------------------------------------------------------------------
