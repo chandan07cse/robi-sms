@@ -37,7 +37,7 @@
                   v-model="settings.default_sender" 
                   type="text" 
                   class="input w-full" 
-                  placeholder="e.g., 8801810187701"
+                  placeholder="e.g., 880XXXXXXXXXX"
                   :disabled="!editMode"
                 >
               </div>

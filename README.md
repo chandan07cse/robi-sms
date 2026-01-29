@@ -170,14 +170,14 @@ use AdaReach\Sms\Facades\AdaReach;
 $result = AdaReach::sendSingle(
     receiver: '01712345678',
     message: 'Hello from AdaReach SMS!',
-    sender: '8801810187701'
+    sender: '880XXXXXXXXXX'
 );
 
 // Send bulk SMS
 $result = AdaReach::sendBulk(
     receivers: ['01712345678', '01812345678'],
     message: 'Bulk message to all recipients',
-    sender: '8801810187701'
+    sender: '880XXXXXXXXXX'
 );
 
 // Check balance
@@ -205,7 +205,7 @@ $token = $client->generateToken();
 
 // Send SMS
 $result = $client->sendSms([
-    'sender' => '8801810187701',
+    'sender' => '880XXXXXXXXXX',
     'receiver' => ['01712345678'],
     'content' => 'Your message here',
     'msgType' => 1,
@@ -221,13 +221,13 @@ use AdaReach\Sms\SmsBuilder;
 
 $sms = new SmsBuilder();
 
-$result = $sms->sender('8801810187701')
+$result = $sms->sender('880XXXXXXXXXX')
     ->to('01712345678')
     ->message('Hello from SMS Builder!')
     ->send();
 
 // Or with multiple recipients
-$result = $sms->sender('8801810187701')
+$result = $sms->sender('880XXXXXXXXXX')
     ->to(['01712345678', '01812345678'])
     ->message('Bulk message via builder')
     ->send();
@@ -256,7 +256,7 @@ $stats = $repository->getStatistics();
 $sms = $repository->create([
     'phone' => '01712345678',
     'message' => 'Your message',
-    'sender' => '8801810187701',
+    'sender' => '880XXXXXXXXXX',
     'status' => 'sent',
     'message_id' => 'unique_message_id',
     'cost' => 0.5
@@ -301,7 +301,7 @@ try {
 // Send SMS
 try {
     $result = $client->sendSms([
-        'sender' => '8801810187701',
+        'sender' => '880XXXXXXXXXX',
         'receiver' => ['01712345678'],
         'content' => 'Your message here',
         'msgType' => 1,        // 1 = Text, 2 = Unicode
@@ -390,7 +390,7 @@ try {
     $result = $smsService->send(
         phone: '01712345678',
         message: 'Hello from standalone PHP!',
-        sender: '8801810187701'
+        sender: '880XXXXXXXXXX'
     );
     
     echo "SMS sent successfully! ID: {$result['requestId']}\n";
@@ -410,7 +410,7 @@ try {
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `sender` | string | Yes | Sender ID (13-digit, e.g., 8801810187701) |
+| `sender` | string | Yes | Sender ID (13-digit, e.g., 880XXXXXXXXXX) |
 | `receiver` | array | Yes | Array of phone numbers (13-digit format) |
 | `content` | string | Yes | Message content |
 | `msgType` | int | Yes | 1 = Text, 2 = Unicode |
@@ -532,7 +532,7 @@ Event::listen(\AdaReach\Sms\Events\SmsFailed::class, function ($event) {
 use AdaReach\Sms\Exceptions\AdaReachException;
 
 try {
-    $result = AdaReach::sendSingle('01712345678', 'Hello!', '8801810187701');
+    $result = AdaReach::sendSingle('01712345678', 'Hello!', '880XXXXXXXXXX');
 } catch (AdaReachException $e) {
     // Handle API errors
     echo "Error Code: " . $e->getCode() . "\n";
