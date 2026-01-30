@@ -82,8 +82,15 @@ class StandaloneClient
 
     /**
      * Send SMS (single or bulk)
+     * 
+     * @param string|array $recipients Phone number(s) - auto-normalized to 880 format
+     * @param string $message Message content (auto-detects Bangla/Unicode)
+     * @param string|null $sender Sender ID (optional if set in constructor)
+     * @param string|null $campaignId Optional campaign ID
+     * @param bool|null $isUnicode Force Unicode mode (auto-detected if null)
+     * @return array API response
      */
-    public function sendSms($recipients, $message, $sender = null, $campaignId = null)
+    public function sendSms($recipients, $message, $sender = null, $campaignId = null, $isUnicode = null)
     {
         $this->ensureValidToken();
 
@@ -105,6 +112,11 @@ class StandaloneClient
         // Normalize all recipient phone numbers
         $recipients = array_map([$this, 'normalizePhoneNumber'], $recipients);
 
+        // Auto-detect Unicode/Bangla if not explicitly set
+        if ($isUnicode === null) {
+            $isUnicode = $this->isUnicodeMessage($message);
+        }
+
         // Use correct API parameter names (matching Laravel package)
         $params = [
             'sender' => $senderToUse,
@@ -112,7 +124,7 @@ class StandaloneClient
             'content' => $message,          // API expects 'content' not 'text'
             'msgType' => 'T',              // T = Transactional, P = Promotional
             'requestType' => count($recipients) > 1 ? 'B' : 'S',  // S = Single, B = Bulk
-            'contentType' => 1             // 1 = Regular text, 2 = Unicode
+            'contentType' => $isUnicode ? 2 : 1  // 1 = Regular text, 2 = Unicode/Bangla
         ];
 
         if ($campaignId) {
@@ -368,5 +380,19 @@ class StandaloneClient
         
         // Return as-is if we can't determine format
         return $phone;
+    }
+
+    /**
+     * Detect if message contains Unicode/Bangla characters
+     * Auto-detects Bengali, Arabic, Chinese, Emoji, and other non-ASCII characters
+     * 
+     * @param string $message The message to check
+     * @return bool True if message contains Unicode characters
+     */
+    protected function isUnicodeMessage($message)
+    {
+        // Check if message contains any non-ASCII characters
+        // This includes: Bangla, Arabic, Chinese, Emoji, special symbols, etc.
+        return !mb_check_encoding($message, 'ASCII');
     }
 }

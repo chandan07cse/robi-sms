@@ -354,6 +354,11 @@ class DashboardController extends Controller
                 ], 400);
             }
 
+            // Auto-detect Unicode/Bangla if type is 'plain'
+            if ($type === 'plain' && !mb_check_encoding($message, 'ASCII')) {
+                $type = 'unicode';  // Auto-detect Bangla, Emoji, and other Unicode
+            }
+
             $results = [];
             
             foreach ($phones as $phone) {
