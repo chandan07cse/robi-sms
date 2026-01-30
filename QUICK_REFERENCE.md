@@ -37,11 +37,11 @@ No Laravel required. Works in any PHP project.
 ```php
 use AdaReach\Sms\StandaloneClient;
 
-$client = new StandaloneClient('username', 'password');
+$client = new StandaloneClient('username', 'password', 'SenderID');
 
-// Send SMS
-$client->sendSms('880XXXXXXXXXX', 'Hello!', 'Sender');
-$client->sendSms(['880XXX...'], 'Bulk', 'Sender');
+// Send SMS (sender already set)
+$client->sendSms('880XXXXXXXXXX', 'Hello!');
+$client->sendSms(['880XXX...'], 'Bulk');
 
 // Check balance
 $balance = $client->checkBalance();
@@ -51,6 +51,9 @@ $status = $client->getDeliveryStatus($messageId);
 
 // Clear cache
 $client->clearCache();
+
+// Change sender
+$client->setSender('NewSender');
 ```
 
 ## Quick Examples
@@ -60,8 +63,8 @@ $client->clearCache();
 // Laravel
 AdaReach::sendSingle('880XXXXXXXXXX', 'Your OTP: 123456');
 
-// Standalone
-$client->sendSms('880XXXXXXXXXX', 'Your OTP: 123456', 'YourApp');
+// Standalone (sender set in constructor)
+$client->sendSms('880XXXXXXXXXX', 'Your OTP: 123456');
 ```
 
 ### Bulk SMS
@@ -71,8 +74,8 @@ $recipients = ['880XXXXXXXXXX', '880YYYYYYYYYY'];
 // Laravel
 AdaReach::sendBulk($recipients, 'Sale! 50% off today!');
 
-// Standalone
-$client->sendSms($recipients, 'Sale! 50% off today!', 'YourStore');
+// Standalone (sender set in constructor)
+$client->sendSms($recipients, 'Sale! 50% off today!');
 ```
 
 ### Check Balance
@@ -136,8 +139,9 @@ ADAREARCH_DASHBOARD_PASSWORD=hashed_password
 $client = new StandaloneClient(
     'username',          // API username
     'password',          // API password
-    'https://api.mobireach.com.bd/api',  // Base URL
-    '/custom/cache/dir'  // Optional: cache directory
+    'YourBrand',         // Default sender ID
+    'https://api.mobireach.com.bd/api',  // Base URL (optional)
+    '/custom/cache/dir'  // Cache directory (optional)
 );
 ```
 
@@ -159,6 +163,8 @@ $client->getDeliveryStatus($messageId)
 $client->generateToken()
 $client->refreshToken()
 $client->clearCache()
+$client->setSender($sender)
+$client->getSender()
 ```
 
 ## Response Format

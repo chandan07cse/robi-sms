@@ -17,21 +17,20 @@ echo "===========================================\n\n";
 // Configuration - Update these with your credentials
 $username = 'your-api-username';
 $password = 'your-api-password';
-$baseUrl = 'https://api.mobireach.com.bd/api';
-$testPhone = '880XXXXXXXXXX'; // Your test phone number
 $sender = 'YourBrand'; // Your approved sender ID
+$testPhone = '880XXXXXXXXXX'; // Your test phone number
 
 echo "Configuration:\n";
-echo "- Base URL: {$baseUrl}\n";
 echo "- Username: {$username}\n";
-echo "- Test Phone: {$testPhone}\n";
-echo "- Sender: {$sender}\n\n";
+echo "- Sender: {$sender}\n";
+echo "- Test Phone: {$testPhone}\n\n";
 
 try {
     // Initialize client
     echo "[1/3] Initializing client...\n";
-    $client = new StandaloneClient($username, $password, $baseUrl);
-    echo "✓ Client initialized successfully\n\n";
+    $client = new StandaloneClient($username, $password, $sender);
+    echo "✓ Client initialized successfully\n";
+    echo "  - Default sender: " . $client->getSender() . "\n\n";
     
     // Test 1: Check balance
     echo "[2/3] Checking account balance...\n";
@@ -51,12 +50,12 @@ try {
     /*
     $response = $client->sendSms(
         $testPhone,
-        'Test message from AdaReach SMS Standalone Client - ' . date('Y-m-d H:i:s'),
-        $sender
+        'Test message from AdaReach SMS Standalone Client - ' . date('Y-m-d H:i:s')
     );
     echo "✓ SMS sent successfully\n";
     echo "  - Message ID: " . $response['id'] . "\n";
     echo "  - Status: " . $response['status'] . "\n";
+    echo "  - Sender: " . $sender . "\n";
     */
     
     echo "  (Skipped to avoid sending real SMS)\n\n";

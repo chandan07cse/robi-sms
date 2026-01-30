@@ -13,14 +13,16 @@ class StandaloneClient
     protected $username;
     protected $password;
     protected $baseUrl;
+    protected $sender;
     protected $token = null;
     protected $refreshToken = null;
     protected $cacheDir = null;
 
-    public function __construct($username, $password, $baseUrl = 'https://api.mobireach.com.bd/api', $cacheDir = null)
+    public function __construct($username, $password, $sender = null, $baseUrl = 'https://api.mobireach.com.bd/api', $cacheDir = null)
     {
         $this->username = $username;
         $this->password = $password;
+        $this->sender = $sender;
         $this->baseUrl = rtrim($baseUrl, '/');
         $this->cacheDir = $cacheDir ?? sys_get_temp_dir();
         
@@ -85,6 +87,13 @@ class StandaloneClient
     {
         $this->ensureValidToken();
 
+        // Use provided sender or default sender
+        $senderToUse = $sender ?? $this->sender;
+        
+        if (!$senderToUse) {
+            throw new AdaReachException('Sender ID is required. Please provide a sender or set a default sender in the constructor.', 400);
+        }
+
         // Normalize recipients to array
         if (!is_array($recipients)) {
             $recipients = [$recipients];
@@ -93,11 +102,8 @@ class StandaloneClient
         $params = [
             'recipients' => $recipients,
             'text' => $message,
+            'sender' => $senderToUse,
         ];
-
-        if ($sender) {
-            $params['sender'] = $sender;
-        }
 
         if ($campaignId) {
             $params['campaignId'] = $campaignId;
@@ -280,5 +286,22 @@ class StandaloneClient
         
         $this->token = null;
         $this->refreshToken = null;
+    }
+
+    /**
+     * Set default sender ID
+     */
+    public function setSender($sender)
+    {
+        $this->sender = $sender;
+        return $this;
+    }
+
+    /**
+     * Get default sender ID
+     */
+    public function getSender()
+    {
+        return $this->sender;
     }
 }

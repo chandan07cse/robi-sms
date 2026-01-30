@@ -16,8 +16,8 @@ Use without Laravel in any PHP 7.4+ project. [See Standalone Documentation →](
 
 ```php
 // Standalone usage (PHP 7.4+)
-$client = new \AdaReach\Sms\StandaloneClient('username', 'password');
-$response = $client->sendSms('880XXXXXXXXXX', 'Hello!', 'Sender');
+$client = new \AdaReach\Sms\StandaloneClient('username', 'password', 'SenderID');
+$response = $client->sendSms('880XXXXXXXXXX', 'Hello!');
 ```
 
 ## Features
@@ -614,19 +614,18 @@ require_once 'vendor/autoload.php';
 
 use AdaReach\Sms\StandaloneClient;
 
-// Initialize client
+// Initialize client with sender ID
 $client = new StandaloneClient(
     'your-api-username',
     'your-api-password',
-    'https://api.mobireach.com.bd/api'
+    'YourBrand'  // Your approved sender ID
 );
 
-// Send SMS
+// Send SMS (sender already set)
 try {
     $response = $client->sendSms(
         '880XXXXXXXXXX',           // Single recipient
-        'Hello! This is a test.',  // Message
-        'YourBrand'                // Sender ID
+        'Hello! This is a test.'   // Message
     );
     
     echo "SMS sent! Message ID: " . $response['id'] . "\n";
@@ -650,10 +649,10 @@ $recipients = [
     '880ZZZZZZZZZZ'
 ];
 
+// Using default sender set in constructor
 $response = $client->sendSms(
     $recipients,
-    'Bulk message for all',
-    'YourBrand'
+    'Bulk message for all'
 );
 
 echo "Sent to " . count($response['messages']) . " recipients\n";

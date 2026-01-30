@@ -26,19 +26,18 @@ require_once __DIR__ . '/vendor/autoload.php';
 
 use AdaReach\Sms\StandaloneClient;
 
-// Initialize client
+// Initialize client with sender ID
 $client = new StandaloneClient(
     'your-api-username',
     'your-api-password',
-    'https://api.mobireach.com.bd/api'
+    'YourBrand'  // Your approved sender ID (required)
 );
 
 // Send SMS
 try {
     $response = $client->sendSms(
         '880XXXXXXXXXX',
-        'Hello! This is a test message.',
-        'YourBrand'
+        'Hello! This is a test message.'
     );
     
     echo "SMS sent! Message ID: " . $response['id'];
@@ -64,21 +63,67 @@ try {
 
 ```php
 $client = new StandaloneClient(
-    string $username,
-    string $password,
+    string $username,        // API username
+    string $password,        // API password
+    string $sender = null,   // Default sender ID (recommended)
     string $baseUrl = 'https://api.mobireach.com.bd/api',
     string $cacheDir = null  // Optional: Custom cache directory for tokens
 );
+```
+
+**Example with default sender:**
+```php
+$client = new StandaloneClient(
+    'api_username',
+    'api_password',
+    'YourBrand'  // Default sender used for all SMS
+);
+```
+
+**Example with custom base URL and cache:**
+```php
+$client = new StandaloneClient(
+    'api_username',
+    'api_password',
+    'YourBrand',
+    'https://api.mobireach.com.bd/api',
+    '/var/www/cache/sms'
+);
+```
+
+**Set or change sender later:**
+```php
+$client->setSender('NewSender');
+
+// Get current sender
+$currentSender = $client->getSender();
 ```
 
 ### Send Single SMS
 
 ```php
 $response = $client->sendSms(
-    string $recipient,      // Phone number (e.g., '880XXXXXXXXXX')
-    string $message,        // SMS text
-    string $sender = null,  // Optional: Sender ID
+    string $recipient,         // Phone number (e.g., '880XXXXXXXXXX')
+    string $message,           // SMS text
+    string $sender = null,     // Optional: Override default sender
     string $campaignId = null  // Optional: Campaign ID
+);
+```
+
+**Using default sender (set in constructor):**
+```php
+$response = $client->sendSms(
+    '880XXXXXXXXXX',
+    'Hello! Your order has been confirmed.'
+);
+```
+
+**Override sender for specific message:**
+```php
+$response = $client->sendSms(
+    '880XXXXXXXXXX',
+    'Special promotion message',
+    'PromoSender'  // Use different sender for this message
 );
 ```
 

@@ -14,15 +14,19 @@ use AdaReach\Sms\Exceptions\AdaReachException;
 // Configuration
 $username = 'your-api-username';
 $password = 'your-api-password';
-$baseUrl = 'https://api.mobireach.com.bd/api';
 $sender = 'YourBrand'; // Your approved sender ID
 
-// Initialize the client
-$client = new StandaloneClient($username, $password, $baseUrl);
+// Initialize the client with default sender
+$client = new StandaloneClient($username, $password, $sender);
 
-// Optional: Set custom cache directory for tokens
-// Default is system temp directory
-// $client = new StandaloneClient($username, $password, $baseUrl, '/path/to/cache');
+// Optional: Customize base URL and cache directory
+// $client = new StandaloneClient(
+//     $username,
+//     $password,
+//     $sender,
+//     'https://api.mobireach.com.bd/api',
+//     '/path/to/cache'
+// );
 
 try {
     // ============================================
@@ -30,10 +34,10 @@ try {
     // ============================================
     echo "Sending SMS to single recipient...\n";
     
+    // Using default sender (set in constructor)
     $response = $client->sendSms(
-        '880XXXXXXXXXX',  // Single recipient
-        'Hello! This is a test message from AdaReach SMS.',
-        $sender
+        '880XXXXXXXXXX',
+        'Hello! This is a test message from AdaReach SMS.'
     );
     
     echo "SMS sent successfully!\n";
@@ -51,10 +55,11 @@ try {
         '880ZZZZZZZZZZ'
     ];
     
+    // Using default sender
     $response = $client->sendSms(
         $recipients,
         'Bulk message: Special offer! Get 20% off on all items.',
-        $sender,
+        null,  // Use default sender
         'CAMPAIGN_ID_123' // Optional campaign ID
     );
     
