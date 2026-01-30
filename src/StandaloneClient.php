@@ -18,7 +18,7 @@ class StandaloneClient
     protected $refreshToken = null;
     protected $cacheDir = null;
 
-    public function __construct($username, $password, $sender = null, $baseUrl = 'https://api.mobireach.com.bd/api', $cacheDir = null)
+    public function __construct($username, $password, $sender = null, $baseUrl = 'https://api.mobireach.com.bd', $cacheDir = null)
     {
         $this->username = $username;
         $this->password = $password;
@@ -99,10 +99,14 @@ class StandaloneClient
             $recipients = [$recipients];
         }
 
+        // Use correct API parameter names (matching Laravel package)
         $params = [
-            'recipients' => $recipients,
-            'text' => $message,
             'sender' => $senderToUse,
+            'receiver' => $recipients,      // API expects 'receiver' not 'recipients'
+            'content' => $message,          // API expects 'content' not 'text'
+            'msgType' => 'T',              // T = Transactional, P = Promotional
+            'requestType' => count($recipients) > 1 ? 'B' : 'S',  // S = Single, B = Bulk
+            'contentType' => 1             // 1 = Regular text, 2 = Unicode
         ];
 
         if ($campaignId) {
@@ -187,6 +191,7 @@ class StandaloneClient
         $defaultHeaders = [
             'Content-Type: application/json',
             'Accept: application/json',
+            'User-Agent: AdaReach-SMS-Client/2.0 (PHP/' . phpversion() . ')',
         ];
         
         $headers = array_merge($defaultHeaders, $headers);
@@ -195,6 +200,9 @@ class StandaloneClient
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         curl_setopt($ch, CURLOPT_TIMEOUT, 30);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
+        curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, 2);
+        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
         
         if ($method === 'POST') {
             curl_setopt($ch, CURLOPT_POST, true);
@@ -220,7 +228,22 @@ class StandaloneClient
             ];
         }
         
+        // Debug: Log raw response
+        if (getenv('DEBUG_SMS') === 'true') {
+            echo "\n[DEBUG] HTTP Code: {$httpCode}\n";
+            echo "[DEBUG] Raw Response: " . substr($response, 0, 500) . "\n\n";
+        }
+        
         $result = json_decode($response, true);
+        
+        // If JSON decode failed, return the raw response
+        if ($result === null && json_last_error() !== JSON_ERROR_NONE) {
+            return [
+                'error' => true,
+                'message' => 'Invalid JSON response: ' . $response,
+                'errorCode' => $httpCode
+            ];
+        }
         
         if ($httpCode >= 400) {
             $result['error'] = true;

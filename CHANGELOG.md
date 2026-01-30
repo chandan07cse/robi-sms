@@ -2,6 +2,39 @@
 
 All notable changes to the AdaReach SMS package will be documented in this file.
 
+## [v2.1.0] - 2026-01-31
+
+### 🐛 Critical Bug Fix - SMS Sending Now Works!
+
+**Fixed Error 1510** - Standalone client was using incorrect API parameter names.
+
+### Fixed
+
+- **CRITICAL:** Corrected AdaReach API parameter names in StandaloneClient
+  - Changed `recipients` → `receiver` (API requirement)
+  - Changed `text` → `content` (API requirement)
+  - Added `msgType` = 'T' (Transactional/Promotional flag)
+  - Added `requestType` = 'S'/'B' (Single/Bulk detection)
+  - Added `contentType` = 1 (Regular text/Unicode flag)
+  
+### Impact
+
+- ✅ SMS sending now works correctly in standalone mode
+- ✅ Fixes Error 1510 "New API Other Error"
+- ✅ Matches Laravel package behavior exactly
+- ✅ No breaking changes - existing code works as-is
+
+### Migration
+
+No code changes needed! Update and it works:
+
+```php
+// Your code stays the same
+$client = new StandaloneClient('user', 'pass', 'sender');
+$result = $client->sendSms('8801234567890', 'Hello!');
+// Now returns: SUCCESS (previously returned error 1510)
+```
+
 ## [v2.0.0] - 2026-01-31
 
 ### 🎉 Major Release - PHP 7.4+ Support & Standalone Mode
