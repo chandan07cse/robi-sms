@@ -94,10 +94,16 @@ class StandaloneClient
             throw new AdaReachException('Sender ID is required. Please provide a sender or set a default sender in the constructor.', 400);
         }
 
+        // Normalize sender ID
+        $senderToUse = $this->normalizePhoneNumber($senderToUse);
+
         // Normalize recipients to array
         if (!is_array($recipients)) {
             $recipients = [$recipients];
         }
+
+        // Normalize all recipient phone numbers
+        $recipients = array_map([$this, 'normalizePhoneNumber'], $recipients);
 
         // Use correct API parameter names (matching Laravel package)
         $params = [
@@ -326,5 +332,41 @@ class StandaloneClient
     public function getSender()
     {
         return $this->sender;
+    }
+
+    /**
+     * Normalize phone number to international format (880XXXXXXXXXX)
+     * Handles: 01XXXXXXXXX, 8801XXXXXXXXX, +8801XXXXXXXXX, 1XXXXXXXXX
+     */
+    protected function normalizePhoneNumber($phone)
+    {
+        // Remove all non-numeric characters except +
+        $phone = preg_replace('/[^\d+]/', '', $phone);
+        
+        // Remove + prefix if present
+        $phone = ltrim($phone, '+');
+        
+        // If already starts with 880, return as-is
+        if (strpos($phone, '880') === 0 && strlen($phone) === 13) {
+            return $phone;
+        }
+        
+        // If starts with 0 (e.g., 01712345678), remove 0 and add 880
+        if (strpos($phone, '0') === 0 && strlen($phone) === 11) {
+            return '880' . substr($phone, 1);
+        }
+        
+        // If starts with 1 and is 10 digits (e.g., 1712345678), add 880
+        if (strpos($phone, '1') === 0 && strlen($phone) === 10) {
+            return '880' . $phone;
+        }
+        
+        // If it's just 10 digits starting with anything, assume it needs 880
+        if (strlen($phone) === 10) {
+            return '880' . $phone;
+        }
+        
+        // Return as-is if we can't determine format
+        return $phone;
     }
 }
