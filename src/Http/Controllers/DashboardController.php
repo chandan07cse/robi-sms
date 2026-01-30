@@ -165,13 +165,23 @@ class DashboardController extends Controller
     {
         $period = $request->get('period', '7days');
         
-        $startDate = match($period) {
-            'today' => date('Y-m-d'),
-            '7days' => date('Y-m-d', strtotime('-7 days')),
-            '30days' => date('Y-m-d', strtotime('-30 days')),
-            '90days' => date('Y-m-d', strtotime('-90 days')),
-            default => date('Y-m-d', strtotime('-7 days')),
-        };
+        switch ($period) {
+            case 'today':
+                $startDate = date('Y-m-d');
+                break;
+            case '7days':
+                $startDate = date('Y-m-d', strtotime('-7 days'));
+                break;
+            case '30days':
+                $startDate = date('Y-m-d', strtotime('-30 days'));
+                break;
+            case '90days':
+                $startDate = date('Y-m-d', strtotime('-90 days'));
+                break;
+            default:
+                $startDate = date('Y-m-d', strtotime('-7 days'));
+                break;
+        }
 
         $stats = $this->repository->getStats($startDate, date('Y-m-d'));
         

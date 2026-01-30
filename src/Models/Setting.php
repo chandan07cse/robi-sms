@@ -36,12 +36,16 @@ class Setting extends Model
             $value = $setting->encrypted ? decrypt($setting->value) : $setting->value;
 
             // Cast to appropriate type
-            return match ($setting->type) {
-                'boolean' => filter_var($value, FILTER_VALIDATE_BOOLEAN),
-                'integer' => (int) $value,
-                'json' => json_decode($value, true),
-                default => $value,
-            };
+            switch ($setting->type) {
+                case 'boolean':
+                    return filter_var($value, FILTER_VALIDATE_BOOLEAN);
+                case 'integer':
+                    return (int) $value;
+                case 'json':
+                    return json_decode($value, true);
+                default:
+                    return $value;
+            }
         });
     }
 

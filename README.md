@@ -4,22 +4,38 @@
 [![Total Downloads](https://img.shields.io/packagist/dt/chandan07cse/robi-sms.svg?style=flat-square)](https://packagist.org/packages/chandan07cse/robi-sms)
 [![License](https://img.shields.io/packagist/l/chandan07cse/robi-sms.svg?style=flat-square)](https://packagist.org/packages/chandan07cse/robi-sms)
 
-A comprehensive Laravel package for integrating with AdaReach (Robi/MobiReach) Business SMS API. This package includes a beautiful dashboard interface for managing SMS campaigns, sending bulk messages, and monitoring delivery status with real-time updates.
+A comprehensive package for integrating with AdaReach (Robi/MobiReach) Business SMS API. Works with **Laravel** or as a **standalone PHP library** (PHP 7.4+).
+
+## 📦 Two Ways to Use
+
+### 1. Laravel Integration (Recommended)
+Full-featured Laravel package with dashboard, queue support, and events.
+
+### 2. Standalone PHP Library
+Use without Laravel in any PHP 7.4+ project. [See Standalone Documentation →](STANDALONE_USAGE.md)
+
+```php
+// Standalone usage (PHP 7.4+)
+$client = new \AdaReach\Sms\StandaloneClient('username', 'password');
+$response = $client->sendSms('880XXXXXXXXXX', 'Hello!', 'Sender');
+```
 
 ## Features
 
 ✨ **Core Features:**
 - Send single and bulk SMS messages
 - Real-time SMS delivery tracking
-- Beautiful Vue.js dashboard interface
-- Database-backed settings management
-- Encrypted credentials storage
-- SMS history and analytics
+- Beautiful Vue.js dashboard interface (Laravel only)
+- Database-backed settings management (Laravel only)
+- Encrypted credentials storage (Laravel only)
+- SMS history and analytics (Laravel only)
 - Cost estimation before sending
 - Character counter with SMS parts calculation
 - Balance checking (GUI and API balance)
+- **PHP 7.4+ compatible** (Standalone mode)
+- **Works without Laravel** (Standalone mode)
 
-🎨 **Dashboard Features:**
+🎨 **Dashboard Features** (Laravel Integration Only):
 - Modern, responsive UI with dark mode support
 - Real-time updates with WebSocket (optional)
 - SMS analytics with charts
@@ -29,22 +45,32 @@ A comprehensive Laravel package for integrating with AdaReach (Robi/MobiReach) B
 - Daily/weekly/monthly statistics
 
 🔒 **Security:**
-- Encrypted API credentials
+- Encrypted API credentials (Laravel)
 - Token-based authentication with auto-refresh
-- Redis caching for performance
-- Database-backed configuration
+- Redis caching for performance (Laravel)
+- Database-backed configuration (Laravel)
+- File-based token caching (Standalone)
 
 ## Requirements
 
+### For Laravel Integration
 - PHP 8.1 or higher
 - Laravel 10.x or 11.x
 - MySQL/PostgreSQL database
 - Redis (optional, for caching)
 - Node.js 16+ (for dashboard assets)
 
+### For Standalone Usage
+- PHP 7.4 or higher
+- cURL extension
+- JSON extension
+- Composer
+
 ## Installation
 
-### Step 1: Install via Composer
+### Option 1: Laravel Integration
+
+#### Step 1: Install via Composer
 
 ```bash
 composer require chandan07cse/robi-sms
@@ -568,6 +594,94 @@ try {
 | 1506 | Insufficient Balance | Recharge your account |
 | 401 | Authentication Failed | Check username/password |
 | 403 | Token Expired | Token will auto-refresh |
+
+## Option 2: Standalone PHP Usage (Without Laravel)
+
+If you want to use this package **outside Laravel** or with **PHP 7.4+**, use the standalone client:
+
+### Installation
+
+```bash
+composer require chandan07cse/robi-sms
+```
+
+### Quick Example
+
+```php
+<?php
+
+require_once 'vendor/autoload.php';
+
+use AdaReach\Sms\StandaloneClient;
+
+// Initialize client
+$client = new StandaloneClient(
+    'your-api-username',
+    'your-api-password',
+    'https://api.mobireach.com.bd/api'
+);
+
+// Send SMS
+try {
+    $response = $client->sendSms(
+        '880XXXXXXXXXX',           // Single recipient
+        'Hello! This is a test.',  // Message
+        'YourBrand'                // Sender ID
+    );
+    
+    echo "SMS sent! Message ID: " . $response['id'] . "\n";
+    
+    // Check balance
+    $balance = $client->checkBalance();
+    echo "Balance: " . $balance['balance'] . " SMS\n";
+    
+} catch (Exception $e) {
+    echo "Error: " . $e->getMessage() . "\n";
+}
+```
+
+### Bulk SMS
+
+```php
+// Send to multiple recipients
+$recipients = [
+    '880XXXXXXXXXX',
+    '880YYYYYYYYYY',
+    '880ZZZZZZZZZZ'
+];
+
+$response = $client->sendSms(
+    $recipients,
+    'Bulk message for all',
+    'YourBrand'
+);
+
+echo "Sent to " . count($response['messages']) . " recipients\n";
+```
+
+### Complete Documentation
+
+📖 **[View Full Standalone Documentation](STANDALONE_USAGE.md)**
+
+The standalone documentation includes:
+- Detailed API reference
+- Error handling examples
+- OTP/verification code examples
+- Order notification examples
+- Bulk campaign examples
+- Token management guide
+- Troubleshooting tips
+- Best practices
+
+**Features:**
+- ✅ PHP 7.4+ compatible
+- ✅ No Laravel required
+- ✅ cURL-based (no Guzzle dependency in standalone mode)
+- ✅ Automatic token management
+- ✅ File-based token caching
+- ✅ Single & bulk SMS support
+- ✅ Balance checking
+- ✅ Delivery status tracking
 
 ## Testing
 
