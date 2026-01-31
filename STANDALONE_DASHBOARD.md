@@ -205,10 +205,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 **Usage:**
 ```bash
 # Place dashboard.php in your project
-php -S localhost:8080 dashboard.php
+php -S localhost:8095 dashboard.php
 
 # Open browser
-http://localhost:8080
+http://localhost:8095
 ```
 
 ---
