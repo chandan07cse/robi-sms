@@ -10,11 +10,11 @@
  * 3. Or use PHP built-in server: php -S localhost:8095
  * 
  * Apache .htaccess example:
- * RewriteRule ^sms-dashboard$ vendor/chandan07cse/adarearch-laravel/public/sms-dashboard.php [L]
+ * RewriteRule ^sms-dashboard$ vendor/chandan07cse/robi-sms/public/sms-dashboard.php [L]
  * 
  * Nginx example:
  * location /sms-dashboard {
- *     rewrite ^/sms-dashboard$ /vendor/chandan07cse/adarearch-laravel/public/sms-dashboard.php last;
+ *     rewrite ^/sms-dashboard$ /vendor/chandan07cse/robi-sms/public/sms-dashboard.php last;
  * }
  */
 
@@ -23,7 +23,7 @@ session_start();
 
 // Auto-detect vendor autoload location
 $vendorPaths = [
-    __DIR__ . '/../../autoload.php',           // If in vendor/chandan07cse/adarearch-laravel/public
+    __DIR__ . '/../../autoload.php',           // If in vendor/chandan07cse/robi-sms/public
     __DIR__ . '/../vendor/autoload.php',        // If in project root
     __DIR__ . '/vendor/autoload.php',           // If in public directory
     __DIR__ . '/../../../autoload.php',         // Composer vendor structure

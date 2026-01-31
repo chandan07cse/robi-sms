@@ -2,16 +2,50 @@
 
 After installing the package via Composer, you can access a ready-to-use SMS dashboard at `/sms-dashboard` URL.
 
-## Quick Setup (2 minutes)
+## ⚡ Super Quick Setup (1 Minute)
 
-### Option 1: Using .htaccess (Apache)
+Add **ONE line** to your main entry point (index.php or routes file):
+
+```php
+// Add this line where you handle routes
+require __DIR__ . '/vendor/chandan07cse/robi-sms/routes/sms-dashboard.php';
+```
+
+**That's it!** Now access: `http://yoursite.com/sms-dashboard` ✅
+
+---
+
+## Quick Setup Options
+
+### Option 1: Include Route File (Easiest - Recommended)
+
+**For plain PHP projects:**
+
+```php
+// In your index.php or main routing file
+require __DIR__ . '/vendor/chandan07cse/robi-sms/routes/sms-dashboard.php';
+
+// Your other routes below...
+```
+
+**For custom routing systems:**
+
+```php
+// Add after your router initialization
+if (preg_match('#^/sms-dashboard/?$#', $_SERVER['REQUEST_URI'])) {
+    require __DIR__ . '/vendor/chandan07cse/robi-sms/public/sms-dashboard.php';
+    exit;
+}
+```
+
+### Option 2: Using .htaccess (Apache Users)
 
 Create or edit `.htaccess` in your project root:
 
 ```apache
 # SMS Dashboard Route
 RewriteEngine On
-RewriteRule ^sms-dashboard$ vendor/chandan07cse/adarearch-laravel/public/sms-dashboard.php [L]
+RewriteRule ^sms-dashboard$ vendor/chandan07cse/robi-sms/public/sms-dashboard.php [L]
 ```
 
 **Access:** `http://yoursite.com/sms-dashboard`
@@ -22,7 +56,7 @@ Add to your nginx config:
 
 ```nginx
 location /sms-dashboard {
-    rewrite ^/sms-dashboard$ /vendor/chandan07cse/adarearch-laravel/public/sms-dashboard.php last;
+    rewrite ^/sms-dashboard$ /vendor/chandan07cse/robi-sms/public/sms-dashboard.php last;
 }
 ```
 
@@ -32,7 +66,7 @@ location /sms-dashboard {
 
 ```bash
 # Copy dashboard to your public directory
-cp vendor/chandan07cse/adarearch-laravel/public/sms-dashboard.php public/
+cp vendor/chandan07cse/robi-sms/public/sms-dashboard.php public/
 
 # Access directly
 http://yoursite.com/sms-dashboard.php
@@ -43,7 +77,7 @@ http://yoursite.com/sms-dashboard.php
 
 ```bash
 # Navigate to vendor directory
-cd vendor/chandan07cse/adarearch-laravel/public
+cd vendor/chandan07cse/robi-sms/public
 
 # Run PHP server
 php -S localhost:8095 sms-dashboard.php
@@ -100,7 +134,7 @@ return [
 
 ```bash
 # Install package
-composer require chandan07cse/adarearch-laravel
+composer require chandan07cse/robi-sms
 
 # Create .env
 cat > .env << EOF
@@ -113,7 +147,7 @@ EOF
 # Create .htaccess
 cat > .htaccess << EOF
 RewriteEngine On
-RewriteRule ^sms-dashboard$ vendor/chandan07cse/adarearch-laravel/public/sms-dashboard.php [L]
+RewriteRule ^sms-dashboard$ vendor/chandan07cse/robi-sms/public/sms-dashboard.php [L]
 EOF
 
 # Access
@@ -124,7 +158,7 @@ http://localhost/sms-dashboard
 
 ```bash
 # Install package
-composer require chandan07cse/adarearch-laravel
+composer require chandan07cse/robi-sms
 
 # Add to .env
 echo "ADAREARCH_USERNAME=your_username" >> .env
@@ -137,13 +171,13 @@ sms_dashboard:
     path: /sms-dashboard
     controller: Symfony\Bundle\FrameworkBundle\Controller\TemplateController
     defaults:
-        template: '@!vendor/chandan07cse/adarearch-laravel/public/sms-dashboard.php'
+        template: '@!vendor/chandan07cse/robi-sms/public/sms-dashboard.php'
 EOF
 ```
 
 Or simpler - copy to public:
 ```bash
-cp vendor/chandan07cse/adarearch-laravel/public/sms-dashboard.php public/
+cp vendor/chandan07cse/robi-sms/public/sms-dashboard.php public/
 # Access: http://localhost/sms-dashboard.php
 ```
 
@@ -151,7 +185,7 @@ cp vendor/chandan07cse/adarearch-laravel/public/sms-dashboard.php public/
 
 ```bash
 # Install package
-composer require chandan07cse/adarearch-laravel
+composer require chandan07cse/robi-sms
 
 # Add to .env
 ADAREARCH_USERNAME=your_username
@@ -161,7 +195,7 @@ ADAREARCH_BASE_URL=https://api.mobireach.com.bd
 
 # Create route in app/Config/Routes.php
 $routes->get('sms-dashboard', function() {
-    include ROOTPATH . 'vendor/chandan07cse/adarearch-laravel/public/sms-dashboard.php';
+    include ROOTPATH . 'vendor/chandan07cse/robi-sms/public/sms-dashboard.php';
 });
 ```
 
@@ -169,7 +203,7 @@ $routes->get('sms-dashboard', function() {
 
 ```bash
 # Install package
-composer require chandan07cse/adarearch-laravel
+composer require chandan07cse/robi-sms
 
 # Add to .env
 ADAREARCH_USERNAME=your_username
@@ -179,7 +213,7 @@ ADAREARCH_SENDER=your_sender
 # Add route
 $app->get('/sms-dashboard', function ($request, $response) {
     ob_start();
-    include __DIR__ . '/../vendor/chandan07cse/adarearch-laravel/public/sms-dashboard.php';
+    include __DIR__ . '/../vendor/chandan07cse/robi-sms/public/sms-dashboard.php';
     $html = ob_get_clean();
     $response->getBody()->write($html);
     return $response;
@@ -190,11 +224,11 @@ $app->get('/sms-dashboard', function ($request, $response) {
 
 ```bash
 # Install
-composer require chandan07cse/adarearch-laravel
+composer require chandan07cse/robi-sms
 
 # Create public/.htaccess
 RewriteEngine On
-RewriteRule ^sms-dashboard$ ../vendor/chandan07cse/adarearch-laravel/public/sms-dashboard.php [L]
+RewriteRule ^sms-dashboard$ ../vendor/chandan07cse/robi-sms/public/sms-dashboard.php [L]
 
 # Set env in Apache config or .htaccess
 SetEnv ADAREARCH_USERNAME "your_username"
@@ -282,8 +316,8 @@ Never hardcode credentials - always use environment variables or config files.
 
 **Solution:** 
 ```bash
-chmod +x vendor/chandan07cse/adarearch-laravel/public/sms-dashboard.php
-chmod -R 755 vendor/chandan07cse/adarearch-laravel/public/
+chmod +x vendor/chandan07cse/robi-sms/public/sms-dashboard.php
+chmod -R 755 vendor/chandan07cse/robi-sms/public/
 ```
 
 ---
@@ -310,7 +344,7 @@ chmod -R 755 vendor/chandan07cse/adarearch-laravel/public/
 
 ```bash
 # Installation
-composer require chandan07cse/adarearch-laravel
+composer require chandan07cse/robi-sms
 
 # Configuration (.env)
 ADAREARCH_USERNAME=your_username

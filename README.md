@@ -1,53 +1,85 @@
-# AdaReach SMS - Laravel Package
+# AdaReach SMS - Laravel Package & Standalone Library
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/chandan07cse/robi-sms.svg?style=flat-square)](https://packagist.org/packages/chandan07cse/robi-sms)
 [![Total Downloads](https://img.shields.io/packagist/dt/chandan07cse/robi-sms.svg?style=flat-square)](https://packagist.org/packages/chandan07cse/robi-sms)
 [![License](https://img.shields.io/packagist/l/chandan07cse/robi-sms.svg?style=flat-square)](https://packagist.org/packages/chandan07cse/robi-sms)
+[![PHP Version](https://img.shields.io/packagist/php-v/chandan07cse/robi-sms.svg?style=flat-square)](https://packagist.org/packages/chandan07cse/robi-sms)
 
 A comprehensive package for integrating with AdaReach (Robi/MobiReach) Business SMS API. Works with **Laravel** or as a **standalone PHP library** (PHP 7.4+).
 
-## 📦 Two Ways to Use
+## ⚡ Quick Start
 
-### 1. Laravel Integration (Recommended)
-Full-featured Laravel package with dashboard, queue support, and events.
+### Installation
 
-### 2. Standalone PHP Library
-Use without Laravel in any PHP 7.4+ project. [See Standalone Documentation →](STANDALONE_USAGE.md)
+```bash
+composer require chandan07cse/robi-sms
+```
+
+### Dashboard Access (1 Line Setup)
+
+Add to your `index.php` or main routing file:
 
 ```php
-// Standalone usage (PHP 7.4+)
-$client = new \AdaReach\Sms\StandaloneClient('username', 'password', 'SenderID');
-$response = $client->sendSms('880XXXXXXXXXX', 'Hello!');
+require __DIR__ . '/vendor/chandan07cse/robi-sms/routes/sms-dashboard.php';
 ```
+
+✅ **Done!** Visit: `http://yoursite.com/sms-dashboard`
+
+### Send SMS (Standalone PHP)
+
+```php
+use AdaReach\Sms\StandaloneClient;
+
+$client = new StandaloneClient('username', 'password', 'SenderID');
+
+// Phone auto-normalized (01XXX → 880XXX)
+$response = $client->sendSms('01703611094', 'Hello!');
+
+// Bangla SMS (Unicode auto-detected)
+$response = $client->sendSms('01703611094', 'হ্যালো বাংলা!');
+
+// Check balance
+$balance = $client->getBalance();
+```
+
+---
+
+## 📦 Two Ways to Use
+
+### 1. Laravel Integration
+Full-featured Laravel package with dashboard, queue support, and events.
+- [Laravel Installation Guide →](INSTALLATION.md)
+
+### 2. Standalone PHP Library (No Laravel)
+Use in any PHP 7.4+ project without Laravel dependencies.
+- [Standalone Documentation →](STANDALONE_USAGE.md)
+- [Quick Setup Guide →](QUICK_SETUP.md)
+
+---
 
 ## Features
 
 ✨ **Core Features:**
 - Send single and bulk SMS messages
+- **Phone auto-normalization** (01XXX → 880XXX)
+- **Bangla/Unicode auto-detection**
 - Real-time SMS delivery tracking
-- Beautiful Vue.js dashboard interface (Laravel only)
-- Database-backed settings management (Laravel only)
-- Encrypted credentials storage (Laravel only)
-- SMS history and analytics (Laravel only)
-- Cost estimation before sending
-- Character counter with SMS parts calculation
-- Balance checking (GUI and API balance)
-- **PHP 7.4+ compatible** (Standalone mode)
+- Beautiful dashboard interface
+- Balance checking (API & GUI balance)
+- **PHP 7.4+ compatible**
 - **Works without Laravel** (Standalone mode)
 
-🎨 **Dashboard Features** (Laravel Integration Only):
-- Modern, responsive UI with dark mode support
-- Real-time updates with WebSocket (optional)
-- SMS analytics with charts
-- Settings management interface
-- Quick send SMS functionality
-- Message history with filtering
-- Daily/weekly/monthly statistics
+🎨 **Dashboard Features:**
+- Modern, responsive UI with tabs
+- Character counter with SMS parts
+- Single & Bulk SMS sending
+- Real-time balance display
+- Credential management
 
 🔒 **Security:**
-- Encrypted API credentials (Laravel)
 - Token-based authentication with auto-refresh
-- Redis caching for performance (Laravel)
+- Encrypted credentials (Laravel mode)
+- File-based token caching (Standalone mode)
 - Database-backed configuration (Laravel)
 - File-based token caching (Standalone)
 

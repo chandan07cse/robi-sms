@@ -225,7 +225,7 @@ composer create-project laravel/laravel sms-dashboard
 cd sms-dashboard
 
 # 2. Install AdaReach package
-composer require chandan07cse/adarearch-laravel
+composer require chandan07cse/robi-sms
 
 # 3. Configure
 php artisan adarearch:install

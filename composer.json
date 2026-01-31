@@ -46,6 +46,19 @@
             }
         }
     },
+    "scripts": {
+        "post-install-cmd": [
+            "@php -r \"echo '\\n\\033[1;32m✅ AdaReach SMS Package Installed!\\033[0m\\n\\n';\"",
+            "@php -r \"echo '\\033[1;36m🚀 Quick Setup (1 line):\\033[0m\\n';\"",
+            "@php -r \"echo '   Add to your index.php:\\n';\"",
+            "@php -r \"echo '   \\033[0;33mrequire __DIR__ . \\\"/vendor/chandan07cse/robi-sms/routes/sms-dashboard.php\\\";\\033[0m\\n\\n';\"",
+            "@php -r \"echo '   Then visit: \\033[1;35mhttp://yoursite.com/sms-dashboard\\033[0m\\n\\n';\"",
+            "@php -r \"echo '📖 Docs: QUICK_SETUP.md | DASHBOARD_ACCESS.md | STANDALONE_USAGE.md\\n\\n';\""
+        ],
+        "post-update-cmd": [
+            "@php -r \"echo '\\n\\033[1;32m✅ AdaReach SMS Package Updated!\\033[0m\\n\\n';\""
+        ]
+    },
     "minimum-stability": "dev",
     "prefer-stable": true
 }
