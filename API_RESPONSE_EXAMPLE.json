@@ -1,0 +1,151 @@
+{
+  "_comment": "GET /api/stats?start_date=2026-01-01&end_date=2026-01-31",
+  "_description": "Complete API response structure for SMS Analytics Dashboard",
+  
+  "total": 1250,
+  "sent": 1200,
+  "delivered": 1150,
+  "failed": 50,
+  "pending": 50,
+  
+  "daily": [
+    {
+      "date": "2026-01-01",
+      "total": 150,
+      "sent": 145,
+      "delivered": 140,
+      "failed": 5,
+      "pending": 5
+    },
+    {
+      "date": "2026-01-02",
+      "total": 180,
+      "sent": 175,
+      "delivered": 170,
+      "failed": 5,
+      "pending": 5
+    },
+    {
+      "date": "2026-01-03",
+      "total": 165,
+      "sent": 160,
+      "delivered": 155,
+      "failed": 5,
+      "pending": 5
+    }
+  ],
+  
+  "avg_response_time": 1.85,
+  
+  "peak_hour": 14,
+  
+  "hourly_distribution": [
+    0,
+    2,
+    1,
+    0,
+    0,
+    3,
+    15,
+    35,
+    65,
+    95,
+    110,
+    120,
+    125,
+    118,
+    130,
+    98,
+    85,
+    70,
+    45,
+    28,
+    15,
+    8,
+    4,
+    2
+  ],
+  
+  "top_senders": [
+    {
+      "sender": "COMPANY",
+      "total": 450,
+      "delivered": 425,
+      "failed": 25,
+      "success_rate": 94.4
+    },
+    {
+      "sender": "ALERT",
+      "total": 320,
+      "delivered": 305,
+      "failed": 15,
+      "success_rate": 95.3
+    },
+    {
+      "sender": "NOTICE",
+      "total": 280,
+      "delivered": 260,
+      "failed": 20,
+      "success_rate": 92.9
+    },
+    {
+      "sender": "INFO",
+      "total": 120,
+      "delivered": 115,
+      "failed": 5,
+      "success_rate": 95.8
+    },
+    {
+      "sender": "UPDATE",
+      "total": 80,
+      "delivered": 75,
+      "failed": 5,
+      "success_rate": 93.8
+    }
+  ],
+  
+  "delivery_time_analysis": [
+    {
+      "date": "2026-01-01",
+      "avg_delivery_time": 2.3
+    },
+    {
+      "date": "2026-01-02",
+      "avg_delivery_time": 1.8
+    },
+    {
+      "date": "2026-01-03",
+      "avg_delivery_time": 2.1
+    },
+    {
+      "date": "2026-01-04",
+      "avg_delivery_time": 1.9
+    },
+    {
+      "date": "2026-01-05",
+      "avg_delivery_time": 2.5
+    }
+  ],
+  
+  "_field_descriptions": {
+    "total": "Total number of SMS in the selected period",
+    "sent": "Number of SMS marked as sent",
+    "delivered": "Number of SMS successfully delivered",
+    "failed": "Number of failed SMS",
+    "pending": "Number of pending SMS",
+    "daily": "Array of daily statistics for each date in the range",
+    "avg_response_time": "Average API response time in seconds (float)",
+    "peak_hour": "Hour with most SMS activity (0-23 integer)",
+    "hourly_distribution": "Array of 24 integers representing SMS count per hour (index 0 = 00:00, index 23 = 23:00)",
+    "top_senders": "Array of top 5 sender IDs with their statistics and success rates",
+    "delivery_time_analysis": "Array of daily average delivery times in seconds"
+  },
+  
+  "_usage_examples": {
+    "curl_basic": "curl 'http://localhost:8000/api/stats' | jq",
+    "curl_date_range": "curl 'http://localhost:8000/api/stats?start_date=2026-01-01&end_date=2026-01-31' | jq",
+    "curl_hourly_only": "curl 'http://localhost:8000/api/stats' | jq '.hourly_distribution'",
+    "curl_top_senders": "curl 'http://localhost:8000/api/stats' | jq '.top_senders'",
+    "javascript": "fetch('/api/stats').then(r => r.json()).then(data => console.log(data))"
+  }
+}

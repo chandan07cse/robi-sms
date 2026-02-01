@@ -6,7 +6,7 @@
 
 require_once __DIR__ . '/vendor/autoload.php';
 
-use Chandan07cse\AdaReach\StandaloneClient;
+use AdaReach\Sms\StandaloneClient;
 
 echo "===========================================\n";
 echo "  Testing Phone Number Normalization\n";

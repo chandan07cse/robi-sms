@@ -88,8 +88,23 @@ class AdaReachClient
     {
         $this->ensureValidToken();
 
+        $startTime = microtime(true);
+        
         $response = Http::withToken($this->token)
             ->post("{$this->baseUrl}/sms/send", $params);
+
+        $responseTime = microtime(true) - $startTime;
+
+        // If token expired (401), refresh and retry once
+        if ($response->status() === 401) {
+            $this->clearTokenCache();
+            $this->refreshToken();
+            
+            $startTime = microtime(true);
+            $response = Http::withToken($this->token)
+                ->post("{$this->baseUrl}/sms/send", $params);
+            $responseTime = microtime(true) - $startTime;
+        }
 
         if ($response->failed()) {
             throw new AdaReachException(
@@ -98,7 +113,10 @@ class AdaReachClient
             );
         }
 
-        return $response->json();
+        $result = $response->json();
+        $result['response_time'] = round($responseTime, 3);
+        
+        return $result;
     }
 
     /**
@@ -114,6 +132,19 @@ class AdaReachClient
                 'messageId' => $messageId,
                 'receiver' => $receiver,
             ]);
+
+        // If token expired (401), refresh and retry once
+        if ($response->status() === 401) {
+            $this->clearTokenCache();
+            $this->refreshToken();
+            
+            $response = Http::withToken($this->token)
+                ->get("{$this->baseUrl}/sms/status", [
+                    'sender' => $sender,
+                    'messageId' => $messageId,
+                    'receiver' => $receiver,
+                ]);
+        }
 
         if ($response->failed()) {
             throw new AdaReachException(
@@ -137,6 +168,17 @@ class AdaReachClient
                 'username' => $this->username,
             ]);
 
+        // If token expired (401), refresh and retry once
+        if ($response->status() === 401) {
+            $this->clearTokenCache();
+            $this->refreshToken();
+            
+            $response = Http::withToken($this->token)
+                ->get("{$this->baseUrl}/balance", [
+                    'username' => $this->username,
+                ]);
+        }
+
         if ($response->failed()) {
             $errorMessage = $response->json('message') 
                 ?? $response->json('description') 
@@ -158,6 +200,30 @@ class AdaReachClient
     {
         if (!$this->token) {
             $this->generateToken();
+            return;
+        }
+
+        // Check if token is expired or about to expire (within 5 minutes)
+        $cacheKey = "adarearch_tokens_{$this->username}";
+        $tokenData = Cache::get($cacheKey);
+        
+        if (!$tokenData || !isset($tokenData['expires_at'])) {
+            // No expiration data, try to refresh or generate new token
+            if ($this->refreshToken) {
+                $this->refreshToken();
+            } else {
+                $this->generateToken();
+            }
+            return;
+        }
+
+        // If token expires in less than 5 minutes, refresh it
+        if (now()->addMinutes(5)->greaterThan($tokenData['expires_at'])) {
+            if ($this->refreshToken) {
+                $this->refreshToken();
+            } else {
+                $this->generateToken();
+            }
         }
     }
 
@@ -167,10 +233,14 @@ class AdaReachClient
     protected function cacheTokens(): void
     {
         $cacheKey = "adarearch_tokens_{$this->username}";
+        $expiresAt = now()->addMinutes(55); // Token valid for 1 hour, cache for 55 minutes
+        
         Cache::put($cacheKey, [
             'token' => $this->token,
             'refresh_token' => $this->refreshToken,
-        ], now()->addMinutes(55)); // Cache for 55 minutes (token valid for 1 hour)
+            'expires_at' => $expiresAt,
+            'cached_at' => now(),
+        ], $expiresAt);
     }
 
     /**

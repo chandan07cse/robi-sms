@@ -45,7 +45,7 @@
           <h3 class="text-sm font-medium text-gray-500">Avg Response Time</h3>
           <Clock :size="20" class="text-blue-500" />
         </div>
-        <p class="text-3xl font-bold text-blue-600">2.3s</p>
+        <p class="text-3xl font-bold text-blue-600">{{ avgResponseTime }}</p>
         <p class="text-xs text-gray-500 mt-1">API response</p>
       </div>
 
@@ -54,7 +54,7 @@
           <h3 class="text-sm font-medium text-gray-500">Peak Hour</h3>
           <Activity :size="20" class="text-purple-500" />
         </div>
-        <p class="text-3xl font-bold text-purple-600">14:00</p>
+        <p class="text-3xl font-bold text-purple-600">{{ peakHour }}</p>
         <p class="text-xs text-gray-500 mt-1">Highest traffic</p>
       </div>
     </div>
@@ -88,24 +88,27 @@
       <!-- Top Senders -->
       <div class="card p-6">
         <h3 class="text-lg font-semibold mb-4">Top Sender IDs</h3>
-        <div class="space-y-4">
+        <div v-if="topSenders && topSenders.length > 0" class="space-y-4">
           <div v-for="(sender, index) in topSenders" :key="index" class="flex items-center gap-3">
             <div class="w-8 h-8 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center font-bold text-primary-600">
               {{ index + 1 }}
             </div>
             <div class="flex-1">
-              <p class="font-medium">{{ sender.name }}</p>
-              <p class="text-sm text-gray-500">{{ sender.count }} SMS</p>
+              <p class="font-medium">{{ sender.sender }}</p>
+              <p class="text-sm text-gray-500">{{ sender.total }} SMS • {{ sender.success_rate }}% success</p>
             </div>
             <div class="w-32">
               <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                 <div 
                   class="bg-primary-600 h-2 rounded-full transition-all"
-                  :style="{ width: (sender.count / topSenders[0].count * 100) + '%' }"
+                  :style="{ width: (sender.total / topSenders[0].total * 100) + '%' }"
                 ></div>
               </div>
             </div>
           </div>
+        </div>
+        <div v-else class="text-center py-8 text-gray-500">
+          No sender data available
         </div>
       </div>
 
@@ -215,33 +218,44 @@ const statusDistribution = computed(() => ({
   }]
 }));
 
-const hourlyActivity = computed(() => ({
-  labels: Array.from({ length: 24 }, (_, i) => `${i}:00`),
-  datasets: [{
-    label: 'SMS Count',
-    data: Array.from({ length: 24 }, () => Math.floor(Math.random() * 100)),
-    backgroundColor: '#8b5cf6'
-  }]
-}));
+const hourlyActivity = computed(() => {
+  const hourlyData = stats.value?.hourly_distribution || Array(24).fill(0);
+  return {
+    labels: Array.from({ length: 24 }, (_, i) => `${i}:00`),
+    datasets: [{
+      label: 'SMS Count',
+      data: hourlyData,
+      backgroundColor: '#8b5cf6'
+    }]
+  };
+});
 
-const deliveryTimeData = computed(() => ({
-  labels: dailyStats.value.map(d => format(new Date(d.date), 'MMM dd')),
-  datasets: [{
-    label: 'Avg Delivery Time (seconds)',
-    data: dailyStats.value.map(() => (Math.random() * 5 + 1).toFixed(2)),
-    borderColor: '#10b981',
-    backgroundColor: 'rgba(16, 185, 129, 0.1)',
-    tension: 0.4
-  }]
-}));
+const deliveryTimeData = computed(() => {
+  const deliveryAnalysis = stats.value?.delivery_time_analysis || [];
+  return {
+    labels: deliveryAnalysis.map(d => format(new Date(d.date), 'MMM dd')),
+    datasets: [{
+      label: 'Avg Delivery Time (seconds)',
+      data: deliveryAnalysis.map(d => d.avg_delivery_time),
+      borderColor: '#10b981',
+      backgroundColor: 'rgba(16, 185, 129, 0.1)',
+      tension: 0.4
+    }]
+  };
+});
 
-const topSenders = ref([
-  { name: 'COMPANY', count: 1250 },
-  { name: 'ALERT', count: 890 },
-  { name: 'NOTICE', count: 645 },
-  { name: 'INFO', count: 432 },
-  { name: 'UPDATE', count: 321 }
-]);
+const topSenders = computed(() => stats.value?.top_senders || []);
+
+const avgResponseTime = computed(() => {
+  const time = stats.value?.avg_response_time || 0;
+  return time > 0 ? `${time}s` : 'N/A';
+});
+
+const peakHour = computed(() => {
+  const hour = stats.value?.peak_hour;
+  if (hour === undefined || hour === null) return 'N/A';
+  return `${String(hour).padStart(2, '0')}:00`;
+});
 
 const lineOptions = {
   responsive: true,

@@ -42,7 +42,7 @@ if (!$autoloadFound) {
     die('<h1>Error</h1><p>Could not find autoload.php. Please run: <code>composer install</code></p>');
 }
 
-use Chandan07cse\AdaReach\StandaloneClient;
+use AdaReach\Sms\StandaloneClient;
 
 // ============================================
 // CONFIGURATION

@@ -5,7 +5,28 @@
 [![License](https://img.shields.io/packagist/l/chandan07cse/robi-sms.svg?style=flat-square)](https://packagist.org/packages/chandan07cse/robi-sms)
 [![PHP Version](https://img.shields.io/packagist/php-v/chandan07cse/robi-sms.svg?style=flat-square)](https://packagist.org/packages/chandan07cse/robi-sms)
 
-A comprehensive package for integrating with AdaReach (Robi/MobiReach) Business SMS API. Works with **Laravel** or as a **standalone PHP library** (PHP 7.4+).
+A comprehensive PHP package for integrating with **AdaReach (Robi/MobiReach) Business SMS API**. Works with **Laravel** or as a **standalone PHP library** (PHP 7.4+).
+
+---
+
+## 📑 Table of Contents
+
+- [Quick Start](#-quick-start)
+- [Features](#-features)
+- [Requirements](#-requirements)
+- [Installation](#-installation)
+- [Dashboard Setup](#-dashboard-setup)
+- [Standalone Usage](#-standalone-usage-no-laravel)
+- [Laravel Integration](#-laravel-integration)
+- [Phone Number Formats](#-phone-number-formats)
+- [Bangla/Unicode SMS](#-banglaunicode-sms)
+- [API Reference](#-api-reference)
+- [Examples](#-examples)
+- [Troubleshooting](#-troubleshooting)
+- [Changelog](#-changelog)
+- [License](#-license)
+
+---
 
 ## ⚡ Quick Start
 
@@ -28,6 +49,9 @@ require __DIR__ . '/vendor/chandan07cse/robi-sms/routes/sms-dashboard.php';
 ### Send SMS (Standalone PHP)
 
 ```php
+<?php
+require 'vendor/autoload.php';
+
 use AdaReach\Sms\StandaloneClient;
 
 $client = new StandaloneClient('username', 'password', 'SenderID');
@@ -40,50 +64,48 @@ $response = $client->sendSms('01703611094', 'হ্যালো বাংলা!
 
 // Check balance
 $balance = $client->getBalance();
+echo "Balance: " . $balance . " BDT";
 ```
 
 ---
 
-## 📦 Two Ways to Use
+## ✨ Features
 
-### 1. Laravel Integration
-Full-featured Laravel package with dashboard, queue support, and events.
-- [Laravel Installation Guide →](INSTALLATION.md)
+### Core Features
+- ✅ Send single and bulk SMS messages
+- ✅ **Phone auto-normalization** (01XXX → 880XXX, +880XXX → 880XXX)
+- ✅ **Bangla/Unicode auto-detection**
+- ✅ Real-time SMS delivery tracking
+- ✅ Balance checking (API & GUI balance)
+- ✅ **PHP 7.4+ compatible**
+- ✅ **Works without Laravel** (Standalone mode)
+- ✅ Token-based authentication with auto-refresh
+- ✅ File-based token caching
 
-### 2. Standalone PHP Library (No Laravel)
-Use in any PHP 7.4+ project without Laravel dependencies.
-- [Standalone Documentation →](STANDALONE_USAGE.md)
-- [Quick Setup Guide →](QUICK_SETUP.md)
+### Dashboard Features
+- 🎨 Modern, responsive UI with tabs
+- 📊 Character counter with SMS parts calculation
+- 📱 Single & Bulk SMS sending
+- 💰 Real-time balance display
+- 🔐 Credential management
+- 📄 Message history (Laravel mode)
+- 📈 Analytics and statistics (Laravel mode)
+
+### Security
+- 🔒 Token-based authentication with auto-refresh
+- 🔐 Encrypted credentials (Laravel mode)
+- 💾 File-based token caching (Standalone mode)
+- 🛡️ Database-backed configuration (Laravel mode)
 
 ---
 
-## Features
+## 📋 Requirements
 
-✨ **Core Features:**
-- Send single and bulk SMS messages
-- **Phone auto-normalization** (01XXX → 880XXX)
-- **Bangla/Unicode auto-detection**
-- Real-time SMS delivery tracking
-- Beautiful dashboard interface
-- Balance checking (API & GUI balance)
-- **PHP 7.4+ compatible**
-- **Works without Laravel** (Standalone mode)
-
-🎨 **Dashboard Features:**
-- Modern, responsive UI with tabs
-- Character counter with SMS parts
-- Single & Bulk SMS sending
-- Real-time balance display
-- Credential management
-
-🔒 **Security:**
-- Token-based authentication with auto-refresh
-- Encrypted credentials (Laravel mode)
-- File-based token caching (Standalone mode)
-- Database-backed configuration (Laravel)
-- File-based token caching (Standalone)
-
-## Requirements
+### For Standalone Usage (Recommended)
+- PHP 7.4 or higher (PHP 7.4, 8.0, 8.1, 8.2, 8.3)
+- cURL extension
+- JSON extension
+- Composer
 
 ### For Laravel Integration
 - PHP 8.1 or higher
@@ -92,843 +114,658 @@ Use in any PHP 7.4+ project without Laravel dependencies.
 - Redis (optional, for caching)
 - Node.js 16+ (for dashboard assets)
 
-### For Standalone Usage
-- PHP 7.4 or higher
-- cURL extension
-- JSON extension
-- Composer
+---
 
-## Installation
+## 📦 Installation
 
-### Option 1: Laravel Integration
-
-#### Step 1: Install via Composer
+Install via Composer:
 
 ```bash
 composer require chandan07cse/robi-sms
 ```
 
-### Step 2: Publish Configuration and Assets
+After installation, you'll see:
 
-```bash
-# Publish configuration file
-php artisan vendor:publish --tag=adarearch-config
+```
+✅ AdaReach SMS Package Installed!
 
-# Publish migration files
-php artisan vendor:publish --tag=adarearch-migrations
+🚀 Quick Setup (1 line):
+   Add to your index.php:
+   require __DIR__ . "/vendor/chandan07cse/robi-sms/routes/sms-dashboard.php";
 
-# Publish dashboard assets (JS, CSS)
-php artisan vendor:publish --tag=adarearch-assets
-
-# Publish all at once
-php artisan vendor:publish --provider="AdaReach\Sms\AdaReachServiceProvider"
+   Then visit: http://yoursite.com/sms-dashboard
 ```
 
-### Step 3: Run Migrations
+---
 
-```bash
-php artisan migrate
+## 🖥️ Dashboard Setup
+
+### Option 1: Include Route File (Easiest - Recommended)
+
+Add ONE line to your `index.php` or main routing file:
+
+```php
+require __DIR__ . '/vendor/chandan07cse/robi-sms/routes/sms-dashboard.php';
 ```
 
-This will create:
-- `adarearch_sms` - SMS records table
-- `adarearch_settings` - Settings storage table
+**Access:** `http://yoursite.com/sms-dashboard`
 
-### Step 4: Configure API Credentials
+### Option 2: Using .htaccess (Apache)
 
-You can configure credentials in two ways:
+Create or edit `.htaccess` in your project root:
 
-#### Option A: Environment Variables (`.env`)
+```apache
+RewriteEngine On
+RewriteRule ^sms-dashboard$ vendor/chandan07cse/robi-sms/public/sms-dashboard.php [L]
+```
+
+### Option 3: Using Nginx
+
+Add to your nginx config:
+
+```nginx
+location /sms-dashboard {
+    rewrite ^/sms-dashboard$ /vendor/chandan07cse/robi-sms/public/sms-dashboard.php last;
+}
+```
+
+### Option 4: Copy to Public Directory
+
+```bash
+cp vendor/chandan07cse/robi-sms/public/sms-dashboard.php public/
+```
+
+**Access:** `http://yoursite.com/sms-dashboard.php`
+
+### Option 5: PHP Built-in Server (Development)
+
+```bash
+cd vendor/chandan07cse/robi-sms/public
+php -S localhost:8080 sms-dashboard.php
+```
+
+**Access:** `http://localhost:8080`
+
+### Environment Configuration
+
+Create a `.env` file in your project root:
 
 ```env
 ADAREARCH_USERNAME=your_username
 ADAREARCH_PASSWORD=your_password
-ADAREARCH_SENDER=880XXXXXXXXXX
-ADAREARCH_BASE_URL=https://api.mobireach.com.bd/api
-
-# Dashboard Authentication (optional, enabled by default)
-ADAREARCH_AUTH_ENABLED=true
-ADAREARCH_DASHBOARD_USERNAME=admin
-ADAREARCH_DASHBOARD_PASSWORD=hashed_password_here
+ADAREARCH_DEFAULT_SENDER=8801XXXXXXXXX
 ```
-
-**Generate a hashed password:**
-```bash
-php artisan adarearch:password yourpassword
-```
-
-This will output a hashed password that you can add to your `.env` file.
-
-#### Option B: Dashboard Settings (Recommended)
-
-1. Access the dashboard at `/adarearch`
-2. Navigate to Settings
-3. Enter your API credentials
-4. Click "Save Settings"
-
-Credentials will be encrypted and stored in the database.
-
-### Step 5: Add Route (Optional)
-
-The package automatically registers the `/adarearch` route. If you want to customize it, publish the routes:
-
-```bash
-php artisan vendor:publish --tag=adarearch-routes
-```
-
-## Usage
-
-### Dashboard Authentication
-
-The dashboard is password-protected by default. To access it:
-
-1. Navigate to `http://your-app.test/sms-dashboard/login`
-2. Enter your credentials (default username: `admin`)
-3. You'll be redirected to the dashboard
-
-**Disable Authentication (Not Recommended for Production):**
-
-In your `.env` file:
-```env
-ADAREARCH_AUTH_ENABLED=false
-```
-
-**Change Login Credentials:**
-
-1. Generate a new password hash:
-```bash
-php artisan adarearch:password your_new_password
-```
-
-2. Update your `.env`:
-```env
-ADAREARCH_DASHBOARD_USERNAME=your_username
-ADAREARCH_DASHBOARD_PASSWORD=hashed_password_from_command
-```
-
-### Using the Dashboard
-
-Access the dashboard at: `http://your-app.test/adarearch`
-
-The dashboard provides:
-- **Dashboard**: Overview with today's statistics
-- **Send SMS**: Quick send interface with cost estimation
-- **SMS Messages**: History of all sent messages
-- **Analytics**: Charts and statistics
-- **Settings**: API configuration and preferences
-
-### Programmatic Usage (Without Dashboard)
-
-**Note:** The `sender` parameter is optional in all methods. If not provided, it will automatically use the default sender from:
-1. Database settings (if configured via dashboard)
-2. Config file (`config/adarearch.php`)
-3. Environment variable (`ADAREARCH_SENDER`)
-
-#### 1. Using the Facade
-
-```php
-use AdaReach\Sms\Facades\AdaReach;
-
-// Send single SMS (sender loaded from config/database)
-$result = AdaReach::sendSingle(
-    receiver: '01712345678',
-    message: 'Hello from AdaReach SMS!'
-);
-
-// Or specify a custom sender
-$result = AdaReach::sendSingle(
-    receiver: '01712345678',
-    message: 'Hello from AdaReach SMS!',
-    sender: '880XXXXXXXXXX'  // Optional: override default sender
-);
-
-// Send bulk SMS (sender loaded from config/database)
-$result = AdaReach::sendBulk(
-    receivers: ['01712345678', '01812345678'],
-    message: 'Bulk message to all recipients'
-);
-
-// Check balance
-$balance = AdaReach::checkBalance();
-echo "GUI Balance: {$balance['guiBalance']} BDT\n";
-echo "API Balance: {$balance['apiBalance']} BDT\n";
-
-// Check message status
-$status = AdaReach::checkStatus('message_request_id');
-```
-
-#### 2. Using the Client Directly
-
-```php
-use AdaReach\Sms\AdaReachClient;
-
-$client = new AdaReachClient(
-    username: 'your_username',
-    password: 'your_password',
-    baseUrl: 'https://api.mobireach.com.bd/api'
-);
-
-// Generate token
-$token = $client->generateToken();
-
-// Send SMS
-$result = $client->sendSms([
-    'sender' => '880XXXXXXXXXX',
-    'receiver' => ['01712345678'],
-    'content' => 'Your message here',
-    'msgType' => 1,
-    'requestType' => 1,
-    'contentType' => 1
-]);
-```
-
-#### 3. Using the SMS Builder
-
-```php
-use AdaReach\Sms\SmsBuilder;
-
-$sms = new SmsBuilder();
-
-// Send with default sender from config/database
-$result = $sms->to('01712345678')
-    ->message('Hello from SMS Builder!')
-    ->send();
-
-// Or specify a custom sender
-$result = $sms->sender('880XXXXXXXXXX')
-    ->to('01712345678')
-    ->message('Hello with custom sender!')
-    ->send();
-
-// Send to multiple recipients
-$result = $sms->to(['01712345678', '01812345678'])
-    ->message('Bulk message via builder')
-    ->send();
-```
-
-#### 4. Using the Repository Pattern
-
-```php
-use AdaReach\Sms\Repositories\SmsRepository;
-
-$repository = app(SmsRepository::class);
-
-// Get all SMS records
-$allSms = $repository->all();
-
-// Find by ID
-$sms = $repository->find(1);
-
-// Get today's SMS
-$todaySms = $repository->todaySms();
-
-// Get statistics
-$stats = $repository->getStatistics();
-
-// Store SMS record
-$sms = $repository->create([
-    'phone' => '01712345678',
-    'message' => 'Your message',
-    'sender' => '880XXXXXXXXXX',
-    'status' => 'sent',
-    'message_id' => 'unique_message_id',
-    'cost' => 0.5
-]);
-```
-
-## Using Outside Laravel
-
-While this package is designed for Laravel, you can use the core API client in any PHP project:
-
-### Installation
-
-```bash
-composer require chandan07cse/robi-sms
-```
-
-### Standalone Usage
-
-```php
-<?php
-
-require 'vendor/autoload.php';
-
-use AdaReach\Sms\AdaReachClient;
-
-// Initialize client
-$client = new AdaReachClient(
-    username: 'your_username',
-    password: 'your_password',
-    baseUrl: 'https://api.mobireach.com.bd/api'
-);
-
-// Generate token (required before sending SMS)
-try {
-    $tokenData = $client->generateToken();
-    echo "Token generated successfully!\n";
-} catch (\Exception $e) {
-    echo "Token generation failed: " . $e->getMessage() . "\n";
-    exit;
-}
-
-// Send SMS
-try {
-    $result = $client->sendSms([
-        'sender' => '880XXXXXXXXXX',
-        'receiver' => ['01712345678'],
-        'content' => 'Your message here',
-        'msgType' => 1,        // 1 = Text, 2 = Unicode
-        'requestType' => 1,     // 1 = Single, 2 = Bulk
-        'contentType' => 1      // 1 = English, 2 = Bangla
-    ]);
-    
-    print_r($result);
-} catch (\Exception $e) {
-    echo "SMS sending failed: " . $e->getMessage() . "\n";
-}
-
-// Check balance
-try {
-    $balance = $client->checkBalance();
-    echo "GUI Balance: {$balance['guiBalance']} BDT\n";
-    echo "API Balance: {$balance['apiBalance']} BDT\n";
-} catch (\Exception $e) {
-    echo "Balance check failed: " . $e->getMessage() . "\n";
-}
-
-// Check message status
-try {
-    $status = $client->checkStatus('your_message_request_id');
-    print_r($status);
-} catch (\Exception $e) {
-    echo "Status check failed: " . $e->getMessage() . "\n";
-}
-```
-
-### Standalone Example with Error Handling
-
-```php
-<?php
-
-require 'vendor/autoload.php';
-
-use AdaReach\Sms\AdaReachClient;
-use AdaReach\Sms\Exceptions\AdaReachException;
-
-class SmsService
-{
-    private AdaReachClient $client;
-    
-    public function __construct(string $username, string $password)
-    {
-        $this->client = new AdaReachClient(
-            username: $username,
-            password: $password,
-            baseUrl: 'https://api.mobireach.com.bd/api'
-        );
-        
-        // Initialize token
-        $this->client->generateToken();
-    }
-    
-    public function send(string $phone, string $message, string $sender): array
-    {
-        try {
-            // Format phone number (remove leading 0, add country code)
-            $formattedPhone = '880' . ltrim($phone, '0');
-            
-            return $this->client->sendSms([
-                'sender' => $sender,
-                'receiver' => [$formattedPhone],
-                'content' => $message,
-                'msgType' => 1,
-                'requestType' => 1,
-                'contentType' => 1
-            ]);
-        } catch (AdaReachException $e) {
-            throw new \Exception("SMS sending failed: " . $e->getMessage());
-        }
-    }
-    
-    public function getBalance(): array
-    {
-        return $this->client->checkBalance();
-    }
-}
-
-// Usage
-try {
-    $smsService = new SmsService('your_username', 'your_password');
-    
-    $result = $smsService->send(
-        phone: '01712345678',
-        message: 'Hello from standalone PHP!',
-        sender: '880XXXXXXXXXX'
-    );
-    
-    echo "SMS sent successfully! ID: {$result['requestId']}\n";
-    echo "Cost: {$result['charge']} BDT\n";
-    
-    $balance = $smsService->getBalance();
-    echo "Remaining Balance: {$balance['guiBalance']} BDT\n";
-    
-} catch (\Exception $e) {
-    echo "Error: " . $e->getMessage() . "\n";
-}
-```
-
-## API Reference
-
-### SMS Parameters
-
-| Parameter | Type | Required | Description |
-|-----------|------|----------|-------------|
-| `sender` | string | Yes | Sender ID (13-digit, e.g., 880XXXXXXXXXX) |
-| `receiver` | array | Yes | Array of phone numbers (13-digit format) |
-| `content` | string | Yes | Message content |
-| `msgType` | int | Yes | 1 = Text, 2 = Unicode |
-| `requestType` | int | Yes | 1 = Single, 2 = Bulk |
-| `contentType` | int | Yes | 1 = English, 2 = Bangla |
-
-### Phone Number Format
-
-Phone numbers must be in 13-digit format: `880XXXXXXXXXX`
-
-Example conversions:
-- `01712345678` → `8801712345678`
-- `+8801712345678` → `8801712345678`
-- `8801712345678` → `8801712345678`
-
-### Message Length & Cost
-
-- **160 characters** = 1 SMS part = ~0.5 BDT
-- **161-306 characters** = 2 SMS parts = ~1.0 BDT
-- **307-459 characters** = 3 SMS parts = ~1.5 BDT
-- And so on...
-
-The dashboard automatically calculates SMS parts and total cost.
-
-## Configuration
-
-### Configuration File (`config/adarearch.php`)
-
-```php
-return [
-    // API Credentials (fallback if not in database)
-    'username' => env('ADAREARCH_USERNAME'),
-    'password' => env('ADAREARCH_PASSWORD'),
-    'base_url' => env('ADAREARCH_BASE_URL', 'https://api.mobireach.com.bd/api'),
-    
-    // Default Sender ID
-    'default_sender' => env('ADAREARCH_SENDER'),
-    
-    // Token Cache TTL (minutes)
-    'token_cache_ttl' => env('ADAREARCH_TOKEN_CACHE_TTL', 60),
-    
-    // Settings Cache TTL (minutes)
-    'settings_cache_ttl' => env('ADAREARCH_SETTINGS_CACHE_TTL', 60),
-    
-    // Dashboard Configuration
-    'dashboard' => [
-        'enabled' => true,
-        'route_prefix' => 'adarearch',
-        'middleware' => ['web'],
-        'author' => 'AdaReach SMS Package',
-    ],
-];
-```
-
-### Database Settings
-
-Settings stored in database take priority over config file:
-- `api_username` - API username
-- `api_password` - API password (encrypted)
-- `api_base_url` - API base URL
-- `default_sender` - Default sender ID
-
-## Dashboard Settings
-
-### API Configuration
-- Test connection with balance check
-- Save encrypted credentials
-- Auto-load on application start
-
-### Dashboard Settings
-- **Real-time Updates**: Enable/disable WebSocket connections
-- **Auto Refresh**: Automatically refresh statistics
-- **Notifications**: Show toast notifications for events
-
-## WebSocket (Optional)
-
-The package supports real-time updates via WebSocket:
-
-### Enable Real-time Updates
-
-1. Install Socket.IO dependencies:
-```bash
-npm install socket.io socket.io-client
-```
-
-2. Start the Socket.IO server:
-```bash
-cd vendor/chandan07cse/robi-sms
-node socket-server.js
-```
-
-3. Enable in Dashboard → Settings → Real-time Updates
-
-### Disable Real-time Updates
-
-Simply toggle off "Real-time Updates" in Settings. No console errors will appear.
-
-## Events
-
-The package dispatches Laravel events for SMS operations:
-
-```php
-// Listen for SMS sent event
-Event::listen(\AdaReach\Sms\Events\SmsSent::class, function ($event) {
-    // $event->sms - SMS record
-    // $event->response - API response
-});
-
-// Listen for SMS failed event
-Event::listen(\AdaReach\Sms\Events\SmsFailed::class, function ($event) {
-    // $event->phone
-    // $event->error
-});
-```
-
-## Error Handling
-
-```php
-use AdaReach\Sms\Exceptions\AdaReachException;
-
-try {
-    // Sender automatically loaded from config/database
-    $result = AdaReach::sendSingle('01712345678', 'Hello!');
-} catch (AdaReachException $e) {
-    // Handle API errors
-    echo "Error Code: " . $e->getCode() . "\n";
-    echo "Error Message: " . $e->getMessage() . "\n";
-} catch (\Exception $e) {
-    // Handle other errors
-    echo "Error: " . $e->getMessage() . "\n";
-}
-```
-
-### Common Error Codes
-
-| Code | Description | Solution |
-|------|-------------|----------|
-| 1504 | Invalid Number | Check phone format (must be 13 digits) |
-| 1505 | Invalid Sender | Verify sender ID is correct |
-| 1506 | Insufficient Balance | Recharge your account |
-| 401 | Authentication Failed | Check username/password |
-| 403 | Token Expired | Token will auto-refresh |
-
-## Option 2: Standalone PHP Usage (Without Laravel)
-
-If you want to use this package **outside Laravel** or with **PHP 7.4+**, use the standalone client:
-
-### Installation
-
-```bash
-composer require chandan07cse/robi-sms
-```
-
-### Quick Example
-
-```php
-<?php
-
-require_once 'vendor/autoload.php';
-
-use AdaReach\Sms\StandaloneClient;
-
-// Initialize client with sender ID
-$client = new StandaloneClient(
-    'your-api-username',
-    'your-api-password',
-    'YourBrand'  // Your approved sender ID
-);
-
-// Send SMS (sender already set)
-try {
-    $response = $client->sendSms(
-        '880XXXXXXXXXX',           // Single recipient
-        'Hello! This is a test.'   // Message
-    );
-    
-    echo "SMS sent! Message ID: " . $response['id'] . "\n";
-    
-    // Check balance
-    $balance = $client->checkBalance();
-    echo "Balance: " . $balance['balance'] . " SMS\n";
-    
-} catch (Exception $e) {
-    echo "Error: " . $e->getMessage() . "\n";
-}
-```
-
-### Bulk SMS
-
-```php
-// Send to multiple recipients
-$recipients = [
-    '880XXXXXXXXXX',
-    '880YYYYYYYYYY',
-    '880ZZZZZZZZZZ'
-];
-
-// Using default sender set in constructor
-$response = $client->sendSms(
-    $recipients,
-    'Bulk message for all'
-);
-
-echo "Sent to " . count($response['messages']) . " recipients\n";
-```
-
-### Complete Documentation
-
-📖 **[View Full Standalone Documentation](STANDALONE_USAGE.md)**
-
-The standalone documentation includes:
-- Detailed API reference
-- Error handling examples
-- OTP/verification code examples
-- Order notification examples
-- Bulk campaign examples
-- Token management guide
-- Troubleshooting tips
-- Best practices
-
-**Features:**
-- ✅ PHP 7.4+ compatible
-- ✅ No Laravel required
-- ✅ cURL-based (no Guzzle dependency in standalone mode)
-- ✅ Automatic token management
-- ✅ File-based token caching
-- ✅ Single & bulk SMS support
-- ✅ Balance checking
-- ✅ Delivery status tracking
-
-## Testing
-
-The package includes comprehensive tests:
-
-```bash
-# Run all tests
-./vendor/bin/phpunit
-
-# Run specific test
-./vendor/bin/phpunit --filter testSendSingleSms
-```
-
-## Examples
-
-### Example 1: Send Welcome SMS
-
-```php
-use AdaReach\Sms\Facades\AdaReach;
-
-public function sendWelcomeSms(User $user)
-{
-    $message = "Welcome {$user->name}! Thank you for registering.";
-    
-    // Sender automatically loaded from config/database
-    return AdaReach::sendSingle(
-        receiver: $user->phone,
-        message: $message
-    );
-}
-```
-
-### Example 2: Send Bulk Promotional SMS
-
-```php
-use AdaReach\Sms\Facades\AdaReach;
-
-public function sendPromotionalSms()
-{
-    $customers = Customer::where('subscribed', true)
-        ->pluck('phone')
-        ->toArray();
-    
-    $message = "🎉 50% OFF on all products! Visit our store today.";
-    
-    // Sender automatically loaded from config/database
-    return AdaReach::sendBulk(
-        receivers: $customers,
-        message: $message
-    );
-}
-```
-
-### Example 3: Send OTP
-
-```php
-use AdaReach\Sms\Facades\AdaReach;
-
-public function sendOtp(string $phone)
-{
-    $otp = rand(100000, 999999);
-    
-    // Store OTP in cache/session
-    cache(["otp_{$phone}" => $otp], now()->addMinutes(5));
-    
-    $message = "Your OTP is: {$otp}. Valid for 5 minutes.";
-    
-    // Sender automatically loaded from config/database
-    return AdaReach::sendSingle(
-        receiver: $phone,
-        message: $message
-    );
-}
-```
-
-### Example 4: Check Balance Before Sending
-
-```php
-use AdaReach\Sms\Facades\AdaReach;
-
-public function sendWithBalanceCheck(array $phones, string $message)
-{
-    // Calculate required balance
-    $smsCount = count($phones);
-    $parts = ceil(strlen($message) / 160);
-    $requiredBalance = $smsCount * $parts * 0.5; // ~0.5 BDT per part
-    
-    // Check balance
-    $balance = AdaReach::checkBalance();
-    
-    if ($balance['guiBalance'] < $requiredBalance) {
-        throw new \Exception("Insufficient balance. Required: {$requiredBalance} BDT");
-    }
-    
-    // Send SMS (sender loaded from config/database)
-    return AdaReach::sendBulk(
-        receivers: $phones,
-        message: $message
-    );
-}
-```
-
-## Troubleshooting
-
-### Issue: "Invalid Number" Error (1504)
-
-**Solution:** Ensure phone numbers are in 13-digit format (`880XXXXXXXXXX`). The package auto-formats numbers, but verify the format:
-
-```php
-// Correct formats
-'8801712345678'  // ✓
-'01712345678'    // ✓ (will be auto-formatted)
-
-// Incorrect formats
-'88001712345678' // ✗ (14 digits)
-'1712345678'     // ✗ (missing leading 0)
-```
-
-### Issue: Token Expired
-
-**Solution:** Tokens auto-refresh. If issues persist, clear cache:
-
-```bash
-php artisan cache:clear
-```
-
-### Issue: Dashboard Not Loading
-
-**Solution:**
-1. Clear browser cache (Ctrl+Shift+R)
-2. Republish assets: `php artisan vendor:publish --tag=adarearch-assets --force`
-3. Check browser console for errors
-
-### Issue: WebSocket Errors in Console
-
-**Solution:** Disable real-time updates in Settings if you're not using WebSocket.
-
-## Performance Optimization
-
-### 1. Use Queue for Bulk SMS
-
-```php
-use Illuminate\Bus\Queueable;
-
-class SendBulkSms implements ShouldQueue
-{
-    use Queueable;
-    
-    public function handle()
-    {
-        AdaReach::sendBulk($this->phones, $this->message, $this->sender);
-    }
-}
-
-// Dispatch job
-SendBulkSms::dispatch($phones, $message, $sender);
-```
-
-### 2. Enable Redis Caching
-
-```env
-CACHE_DRIVER=redis
-```
-
-### 3. Optimize Database Queries
-
-```php
-// Use pagination for large datasets
-$sms = DB::table('adarearch_sms')
-    ->orderBy('created_at', 'desc')
-    ->paginate(50);
-```
-
-## Changelog
-
-### Version 1.0.0 (2026-01-29)
-
-- Initial release
-- SMS sending (single & bulk)
-- Beautiful Vue.js dashboard
-- Database-backed settings
-- Real-time updates (optional)
-- SMS analytics and history
-- Balance checking
-- Cost estimation
-- Encrypted credentials
-
-## Contributing
-
-Contributions are welcome! Please feel free to submit a Pull Request.
-
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
-
-## Security
-
-If you discover any security-related issues, please email chandan07cse@gmail.com instead of using the issue tracker.
-
-## Credits
-
-- **Author**: [chandan07cse](https://github.com/chandan07cse)
-- **API Provider**: AdaReach/MobiReach (Robi)
-
-## License
-
-The MIT License (MIT). Please see [License File](LICENSE) for more information.
-
-## Support
-
-- **Email**: chandan07cse@gmail.com
-- **GitHub Issues**: [https://github.com/chandan07cse/robi-sms/issues](https://github.com/chandan07cse/robi-sms/issues)
-- **Documentation**: [https://github.com/chandan07cse/robi-sms](https://github.com/chandan07cse/robi-sms)
 
 ---
 
-Made with ❤️ for Laravel Developers in Bangladesh
+## 🚀 Standalone Usage (No Laravel)
+
+Use the package in any PHP 7.4+ project without Laravel.
+
+### Basic Usage
+
+```php
+<?php
+require_once __DIR__ . '/vendor/autoload.php';
+
+use AdaReach\Sms\StandaloneClient;
+
+// Initialize client
+$client = new StandaloneClient(
+    'your_username',
+    'your_password',
+    'YourSenderID'  // Optional but recommended
+);
+
+// Send SMS
+try {
+    $response = $client->sendSms('01703611094', 'Hello from PHP!');
+    
+    if ($response['status'] === 'SUCCESS') {
+        echo "SMS sent! Message ID: " . $response['id'];
+    }
+} catch (Exception $e) {
+    echo "Error: " . $e->getMessage();
+}
+```
+
+### Send Bulk SMS
+
+```php
+$phones = ['01703611094', '01812345678', '01956789012'];
+$message = 'Hello everyone!';
+
+$response = $client->sendBulkSms($phones, $message);
+
+echo "Sent to " . count($response['successful']) . " numbers";
+```
+
+### Check Balance
+
+```php
+// Get balance
+$balance = $client->getBalance();
+echo "Current balance: {$balance} BDT";
+
+// Get detailed account info
+$accountInfo = $client->getAccountInfo();
+print_r($accountInfo);
+```
+
+### Advanced Configuration
+
+```php
+$client = new StandaloneClient(
+    'username',
+    'password',
+    'SenderID',
+    'https://api.mobireach.com.bd',  // Custom base URL
+    '/path/to/cache'                  // Custom cache directory
+);
+
+// Change sender ID dynamically
+$client->setSender('NewSender');
+
+// Get current sender
+$currentSender = $client->getSender();
+```
+
+---
+
+## 🎯 Laravel Integration
+
+### Install Package
+
+```bash
+composer require chandan07cse/robi-sms
+```
+
+### Publish Configuration
+
+```bash
+php artisan vendor:publish --provider="AdaReach\Sms\AdaReachServiceProvider"
+```
+
+### Configure Environment
+
+Add to your `.env`:
+
+```env
+ADAREARCH_USERNAME=your_username
+ADAREARCH_PASSWORD=your_password
+ADAREARCH_BASE_URL=https://api.mobireach.com.bd
+ADAREARCH_DEFAULT_SENDER=8801XXXXXXXXX
+```
+
+### Usage in Laravel
+
+```php
+use AdaReach\Sms\Facades\AdaReach;
+
+// Send SMS
+$response = AdaReach::sendSms('01703611094', 'Hello from Laravel!');
+
+// Send bulk SMS
+$response = AdaReach::sendBulkSms(
+    ['01703611094', '01812345678'],
+    'Bulk message'
+);
+
+// Check balance
+$balance = AdaReach::getBalance();
+```
+
+### Access Dashboard
+
+Visit: `http://your-laravel-app.test/adarearch/dashboard`
+
+---
+
+## 📱 Phone Number Formats
+
+The package automatically normalizes phone numbers. All these formats work:
+
+```php
+// All these are normalized to: 8801703611094
+
+$client->sendSms('01703611094', 'Test');       // ✅ Auto-adds 880
+$client->sendSms('1703611094', 'Test');        // ✅ Auto-adds 880
+$client->sendSms('8801703611094', 'Test');     // ✅ Works as-is
+$client->sendSms('+8801703611094', 'Test');    // ✅ Auto-removes +
+```
+
+### How it Works
+
+1. **Starts with `+880`** → Removes `+` → `8801703611094`
+2. **Starts with `880`** → No change → `8801703611094`
+3. **Starts with `01`** → Replaces with `880` → `8801703611094`
+4. **Starts with `1`** → Adds `880` prefix → `8801703611094`
+
+---
+
+## 🇧🇩 Bangla/Unicode SMS
+
+The package **automatically detects** Bangla/Unicode characters and sets the correct content type.
+
+### Auto-Detection
+
+```php
+// English SMS (contentType=1, 160 chars/SMS)
+$client->sendSms('01703611094', 'Hello World');
+
+// Bangla SMS (contentType=2, 70 chars/SMS) - AUTO-DETECTED
+$client->sendSms('01703611094', 'হ্যালো বাংলা!');
+
+// Mixed content (Unicode auto-detected)
+$client->sendSms('01703611094', 'Hello হ্যালো 123');
+
+// Emoji (Unicode auto-detected)
+$client->sendSms('01703611094', 'Hello 👋 World 🌍');
+```
+
+### Character Limits
+
+| Content Type | Characters per SMS | Detection |
+|--------------|-------------------|-----------|
+| English/ASCII | 160 characters | Automatic |
+| Bangla/Unicode | 70 characters | Automatic |
+| Emoji/Special | 70 characters | Automatic |
+
+### Manual Override
+
+```php
+// Force Unicode (not recommended, auto-detection is better)
+$response = $client->sendSms('01703611094', 'Test', null, true);
+```
+
+---
+
+## 📚 API Reference
+
+### StandaloneClient
+
+#### Constructor
+
+```php
+public function __construct(
+    string $username,
+    string $password,
+    string $sender = null,
+    string $baseUrl = 'https://api.mobireach.com.bd',
+    string $cacheDir = null
+)
+```
+
+#### Methods
+
+##### sendSms()
+
+Send SMS to a single recipient.
+
+```php
+public function sendSms(
+    string $phone,
+    string $message,
+    string $sender = null,
+    bool $isUnicode = null
+): array
+```
+
+**Parameters:**
+- `$phone` - Phone number (auto-normalized)
+- `$message` - SMS content
+- `$sender` - Sender ID (optional, uses default if not provided)
+- `$isUnicode` - Force Unicode mode (optional, auto-detected if null)
+
+**Returns:**
+```php
+[
+    'status' => 'SUCCESS',
+    'id' => 'message_id',
+    'phone' => '8801703611094',
+    'message' => 'Your message',
+    'sender' => 'SenderID'
+]
+```
+
+##### sendBulkSms()
+
+Send SMS to multiple recipients.
+
+```php
+public function sendBulkSms(
+    array $phones,
+    string $message,
+    string $sender = null,
+    bool $isUnicode = null
+): array
+```
+
+**Returns:**
+```php
+[
+    'status' => 'SUCCESS',
+    'successful' => ['8801703611094', '8801812345678'],
+    'failed' => [],
+    'total' => 2
+]
+```
+
+##### getBalance()
+
+Check account balance.
+
+```php
+public function getBalance(): float
+```
+
+**Returns:** Balance amount (float)
+
+##### getAccountInfo()
+
+Get detailed account information.
+
+```php
+public function getAccountInfo(): array
+```
+
+**Returns:**
+```php
+[
+    'balance' => 1000.50,
+    'username' => 'your_username',
+    'api_url' => 'https://api.mobireach.com.bd'
+]
+```
+
+##### setSender()
+
+Set or change the sender ID.
+
+```php
+public function setSender(string $sender): self
+```
+
+##### getSender()
+
+Get current sender ID.
+
+```php
+public function getSender(): ?string
+```
+
+---
+
+## 💡 Examples
+
+### Example 1: Simple SMS Sending
+
+```php
+<?php
+require 'vendor/autoload.php';
+
+use AdaReach\Sms\StandaloneClient;
+
+$client = new StandaloneClient('username', 'password', 'MySender');
+
+try {
+    $result = $client->sendSms('01703611094', 'Hello from AdaReach!');
+    echo "Success! Message ID: " . $result['id'];
+} catch (Exception $e) {
+    echo "Error: " . $e->getMessage();
+}
+```
+
+### Example 2: Bulk SMS with Loop
+
+```php
+<?php
+require 'vendor/autoload.php';
+
+use AdaReach\Sms\StandaloneClient;
+
+$client = new StandaloneClient('username', 'password', 'MySender');
+
+// Read phones from database or CSV
+$users = [
+    ['phone' => '01703611094', 'name' => 'John'],
+    ['phone' => '01812345678', 'name' => 'Jane'],
+    ['phone' => '01956789012', 'name' => 'Bob']
+];
+
+foreach ($users as $user) {
+    $message = "Hello {$user['name']}, Welcome to our service!";
+    
+    try {
+        $result = $client->sendSms($user['phone'], $message);
+        echo "✅ Sent to {$user['name']}: {$result['id']}\n";
+    } catch (Exception $e) {
+        echo "❌ Failed for {$user['name']}: {$e->getMessage()}\n";
+    }
+    
+    // Rate limiting (optional)
+    sleep(1);
+}
+```
+
+### Example 3: Check Balance Before Sending
+
+```php
+<?php
+require 'vendor/autoload.php';
+
+use AdaReach\Sms\StandaloneClient;
+
+$client = new StandaloneClient('username', 'password', 'MySender');
+
+// Check balance first
+$balance = $client->getBalance();
+echo "Current balance: {$balance} BDT\n";
+
+if ($balance < 10) {
+    die("Insufficient balance! Please recharge.\n");
+}
+
+// Send SMS
+$result = $client->sendSms('01703611094', 'Your OTP is: 123456');
+echo "OTP sent! Message ID: " . $result['id'];
+```
+
+### Example 4: Bangla SMS with Error Handling
+
+```php
+<?php
+require 'vendor/autoload.php';
+
+use AdaReach\Sms\StandaloneClient;
+
+$client = new StandaloneClient('username', 'password', 'MySender');
+
+$phones = ['01703611094', '01812345678'];
+$message = 'আপনার অর্ডার সফল হয়েছে। ধন্যবাদ!';
+
+foreach ($phones as $phone) {
+    try {
+        $result = $client->sendSms($phone, $message);
+        
+        if ($result['status'] === 'SUCCESS') {
+            echo "✅ Sent to {$phone}\n";
+        } else {
+            echo "❌ Failed to {$phone}: " . ($result['error'] ?? 'Unknown error') . "\n";
+        }
+    } catch (Exception $e) {
+        echo "❌ Exception for {$phone}: {$e->getMessage()}\n";
+    }
+}
+```
+
+### Example 5: Using with Database
+
+```php
+<?php
+require 'vendor/autoload.php';
+
+use AdaReach\Sms\StandaloneClient;
+
+$client = new StandaloneClient('username', 'password', 'MySender');
+
+// Connect to database
+$pdo = new PDO('mysql:host=localhost;dbname=mydb', 'user', 'pass');
+
+// Get pending SMS from database
+$stmt = $pdo->query("SELECT id, phone, message FROM pending_sms WHERE sent = 0 LIMIT 100");
+
+while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+    try {
+        $result = $client->sendSms($row['phone'], $row['message']);
+        
+        // Update database
+        $update = $pdo->prepare("UPDATE pending_sms SET sent = 1, message_id = ?, sent_at = NOW() WHERE id = ?");
+        $update->execute([$result['id'], $row['id']]);
+        
+        echo "✅ Sent SMS ID: {$row['id']}\n";
+    } catch (Exception $e) {
+        // Log error
+        $error = $pdo->prepare("UPDATE pending_sms SET error = ? WHERE id = ?");
+        $error->execute([$e->getMessage(), $row['id']]);
+        
+        echo "❌ Failed SMS ID: {$row['id']}\n";
+    }
+}
+```
+
+---
+
+## 🔧 Troubleshooting
+
+### Common Issues
+
+#### 1. Error 1510: "New API Other Error"
+
+**Cause:** Using old API parameter names.
+
+**Solution:** Update to latest version:
+```bash
+composer update chandan07cse/robi-sms
+```
+
+#### 2. Phone Number Not Working
+
+**Cause:** Invalid phone format.
+
+**Solution:** Use any of these formats (auto-normalized):
+```php
+'01703611094'      // ✅ Recommended
+'8801703611094'    // ✅ Also works
+'+8801703611094'   // ✅ Also works
+```
+
+#### 3. Bangla SMS Not Sending
+
+**Cause:** Old version without Unicode detection.
+
+**Solution:** Update to latest version. Unicode is now auto-detected:
+```bash
+composer update chandan07cse/robi-sms
+```
+
+#### 4. Dashboard Not Loading
+
+**Cause:** Route not registered or .env not configured.
+
+**Solution:**
+1. Add route include:
+   ```php
+   require __DIR__ . '/vendor/chandan07cse/robi-sms/routes/sms-dashboard.php';
+   ```
+2. Create `.env` file with credentials
+
+#### 5. Token Cache Issues
+
+**Cause:** No write permissions on cache directory.
+
+**Solution:**
+```bash
+# Create cache directory
+mkdir -p storage/cache/sms
+
+# Set permissions
+chmod -R 755 storage/cache/sms
+```
+
+### Debug Mode
+
+Enable debug mode to see detailed API responses:
+
+```php
+$client = new StandaloneClient('user', 'pass', 'sender');
+
+try {
+    $result = $client->sendSms('01703611094', 'Test');
+    print_r($result);  // See full response
+} catch (Exception $e) {
+    echo "Error: " . $e->getMessage();
+    echo "\nTrace: " . $e->getTraceAsString();
+}
+```
+
+---
+
+## 📝 Changelog
+
+### [v2.1.0] - 2026-01-31
+
+#### 🐛 Critical Bug Fix - SMS Sending Now Works!
+
+**Fixed Error 1510** - Standalone client was using incorrect API parameter names.
+
+**Fixed:**
+- ✅ Corrected AdaReach API parameter names in StandaloneClient
+  - Changed `recipients` → `receiver` (API requirement)
+  - Changed `text` → `content` (API requirement)
+  - Added `msgType` = 'T' (Transactional/Promotional flag)
+  - Added `requestType` = 'S'/'B' (Single/Bulk detection)
+  - Added `contentType` = 1/2 (Regular text/Unicode flag)
+
+**Impact:**
+- ✅ SMS sending now works correctly in standalone mode
+- ✅ Fixes Error 1510 "New API Other Error"
+- ✅ No breaking changes - existing code works as-is
+
+### [v2.0.0] - 2026-01-31
+
+#### 🎉 Major Release - PHP 7.4+ Support & Standalone Mode
+
+**Added:**
+- ✅ Standalone Client for use without Laravel
+- ✅ PHP 7.4, 8.0, 8.1, 8.2, 8.3 support
+- ✅ Phone number auto-normalization (01XXX → 880XXX)
+- ✅ Bangla/Unicode auto-detection
+- ✅ Ready-to-use SMS dashboard
+- ✅ File-based token caching
+- ✅ cURL-based HTTP client
+
+---
+
+## 📄 License
+
+This package is open-sourced software licensed under the [MIT license](LICENSE).
+
+---
+
+## 🤝 Support
+
+- **GitHub:** [https://github.com/chandan07cse/robi-sms](https://github.com/chandan07cse/robi-sms)
+- **Packagist:** [https://packagist.org/packages/chandan07cse/robi-sms](https://packagist.org/packages/chandan07cse/robi-sms)
+- **Issues:** [https://github.com/chandan07cse/robi-sms/issues](https://github.com/chandan07cse/robi-sms/issues)
+
+---
+
+## 🙏 Credits
+
+- **Author:** [chandan07cse](https://github.com/chandan07cse)
+- **API Provider:** [AdaReach (MobiReach)](https://www.mobireach.com.bd/)
+
+---
+
+Made with ❤️ for the PHP community

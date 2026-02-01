@@ -127,6 +127,13 @@ class DashboardController extends Controller
         $endDate = $request->get('end_date', date('Y-m-d'));
 
         $stats = $this->repository->getStats($startDate, $endDate);
+        
+        // Add analytics data
+        $stats['avg_response_time'] = $this->repository->getAverageResponseTime($startDate, $endDate);
+        $stats['peak_hour'] = $this->repository->getPeakHour($startDate, $endDate);
+        $stats['hourly_distribution'] = $this->repository->getHourlyDistribution($startDate, $endDate);
+        $stats['top_senders'] = $this->repository->getTopSenders($startDate, $endDate, 5);
+        $stats['delivery_time_analysis'] = $this->repository->getDeliveryTimeAnalysis($startDate, $endDate);
 
         return response()->json($stats);
     }
@@ -372,7 +379,7 @@ class DashboardController extends Controller
                         'contentType' => $type === 'unicode' ? 2 : 1  // 1 = Regular, 2 = Unicode
                     ]);
 
-                    // Store in repository
+                    // Store in repository with response time
                     $smsId = $this->repository->store([
                         'phone' => $phone,
                         'sender' => $sender,
@@ -380,6 +387,7 @@ class DashboardController extends Controller
                         'status' => 'sent',
                         'type' => $type,
                         'response' => $response,
+                        'response_time' => $response['response_time'] ?? 0,
                         'source' => 'dashboard'
                     ]);
 

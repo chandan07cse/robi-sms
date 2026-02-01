@@ -9,7 +9,7 @@
 session_start();
 require __DIR__ . '/vendor/autoload.php';
 
-use Chandan07cse\AdaReach\StandaloneClient;
+use AdaReach\Sms\StandaloneClient;
 
 // ============================================
 // CONFIGURATION - Update with your credentials
