@@ -83,6 +83,8 @@ class AdaReachClient
 
     /**
      * Send SMS (single or bulk)
+     * Note: Does NOT retry on 401 to prevent duplicate SMS sends.
+     * Relies on proactive token refresh to prevent 401 errors.
      */
     public function sendSms(array $params): array
     {
@@ -95,17 +97,10 @@ class AdaReachClient
 
         $responseTime = microtime(true) - $startTime;
 
-        // If token expired (401), refresh and retry once
-        if ($response->status() === 401) {
-            $this->clearTokenCache();
-            $this->refreshToken();
-            
-            $startTime = microtime(true);
-            $response = Http::withToken($this->token)
-                ->post("{$this->baseUrl}/sms/send", $params);
-            $responseTime = microtime(true) - $startTime;
-        }
-
+        // Do NOT retry on 401 for SMS sending to prevent duplicates
+        // The proactive token refresh should prevent 401 errors
+        // Better to fail once than send duplicate SMS
+        
         if ($response->failed()) {
             throw new AdaReachException(
                 $response->json('description', 'Failed to send SMS'),
