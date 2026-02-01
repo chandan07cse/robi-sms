@@ -3,10 +3,13 @@
 namespace AdaReach\Sms;
 
 use AdaReach\Sms\Exceptions\AdaReachException;
+use AdaReach\Sms\Storage\SmsRepository;
+use Illuminate\Support\Facades\Log;
 
 class SmsBuilder
 {
     protected AdaReachClient $client;
+    protected SmsRepository $repository;
     protected ?string $sender = null;
     protected array $receivers = [];
     protected ?string $content = null;
@@ -14,9 +17,10 @@ class SmsBuilder
     protected string $requestType = 'S'; // S = Single, B = Bulk
     protected int $contentType = 1; // 1 = Regular, 2 = Unicode
 
-    public function __construct(AdaReachClient $client)
+    public function __construct(AdaReachClient $client, SmsRepository $repository = null)
     {
         $this->client = $client;
+        $this->repository = $repository ?? app(SmsRepository::class);
     }
 
     /**
@@ -115,7 +119,31 @@ class SmsBuilder
             'contentType' => $this->contentType,
         ];
 
-        return $this->client->sendSms($params);
+        $response = $this->client->sendSms($params);
+
+        // Automatically log to Redis for each receiver
+        foreach ($this->receivers as $receiver) {
+            try {
+                $this->repository->store([
+                    'phone' => $receiver,
+                    'sender' => $this->sender,
+                    'message' => $this->content,
+                    'status' => isset($response['errorCode']) ? 'failed' : 'sent',
+                    'type' => $this->contentType === 2 ? 'unicode' : 'plain',
+                    'response' => $response,
+                    'response_time' => $response['response_time'] ?? 0,
+                    'source' => 'facade'
+                ]);
+            } catch (\Exception $e) {
+                // Log error but don't fail the SMS send
+                Log::error('Failed to store SMS in Redis', [
+                    'phone' => $receiver,
+                    'error' => $e->getMessage()
+                ]);
+            }
+        }
+
+        return $response;
     }
 
     /**
