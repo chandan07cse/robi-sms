@@ -379,12 +379,26 @@ class DashboardController extends Controller
                         'contentType' => $type === 'unicode' ? 2 : 1  // 1 = Regular, 2 = Unicode
                     ]);
 
+                    // Determine status from response
+                    // API returns: status="SUCCESS" + errorCode=0 for success
+                    //              status="FAILED" + errorCode=non-zero for failure
+                    $status = 'sent';  // Default to success
+                    
+                    // Check errorCode first (most reliable)
+                    if (isset($response['errorCode']) && $response['errorCode'] != 0) {
+                        $status = 'failed';
+                    }
+                    // Also check status field as secondary indicator
+                    elseif (isset($response['status']) && strtoupper($response['status']) === 'FAILED') {
+                        $status = 'failed';
+                    }
+
                     // Store in repository with response time
                     $smsId = $this->repository->store([
                         'phone' => $phone,
                         'sender' => $sender,
                         'message' => $message,
-                        'status' => 'sent',
+                        'status' => $status,
                         'type' => $type,
                         'response' => $response,
                         'response_time' => $response['response_time'] ?? 0,
@@ -393,6 +407,7 @@ class DashboardController extends Controller
 
                     $results[] = [
                         'phone' => $phone,
+                        'status' => $status,
                         'status' => 'sent',
                         'id' => $smsId
                     ];

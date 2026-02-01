@@ -124,11 +124,25 @@ class SmsBuilder
         // Automatically log to Redis for each receiver
         foreach ($this->receivers as $receiver) {
             try {
+                // Determine status from response
+                // API returns: status="SUCCESS" + errorCode=0 for success
+                //              status="FAILED" + errorCode=non-zero for failure
+                $status = 'sent';  // Default to success
+                
+                // Check errorCode first (most reliable)
+                if (isset($response['errorCode']) && $response['errorCode'] != 0) {
+                    $status = 'failed';
+                }
+                // Also check status field as secondary indicator
+                elseif (isset($response['status']) && strtoupper($response['status']) === 'FAILED') {
+                    $status = 'failed';
+                }
+                
                 $this->repository->store([
                     'phone' => $receiver,
                     'sender' => $this->sender,
                     'message' => $this->content,
-                    'status' => isset($response['errorCode']) ? 'failed' : 'sent',
+                    'status' => $status,
                     'type' => $this->contentType === 2 ? 'unicode' : 'plain',
                     'response' => $response,
                     'response_time' => $response['response_time'] ?? 0,
