@@ -83,8 +83,8 @@ class AdaReachClient
 
     /**
      * Send SMS (single or bulk)
-     * Note: Does NOT retry on 401 to prevent duplicate SMS sends.
-     * Relies on proactive token refresh to prevent 401 errors.
+     * Note: Does NOT retry on authentication errors to prevent duplicate SMS sends.
+     * Relies on proactive token refresh to prevent auth errors.
      */
     public function sendSms(array $params): array
     {
@@ -97,10 +97,15 @@ class AdaReachClient
 
         $responseTime = microtime(true) - $startTime;
 
-        // Do NOT retry on 401 for SMS sending to prevent duplicates
-        // The proactive token refresh should prevent 401 errors
-        // Better to fail once than send duplicate SMS
-        
+        // Check for authentication error (HTTP 401 or errorCode 1501)
+        // Do NOT retry to prevent duplicate SMS sends
+        if ($this->isAuthenticationError($response)) {
+            throw new AdaReachException(
+                'Authentication failed. Token may be expired.',
+                1501
+            );
+        }
+
         if ($response->failed()) {
             throw new AdaReachException(
                 $response->json('description', 'Failed to send SMS'),
@@ -128,8 +133,8 @@ class AdaReachClient
                 'receiver' => $receiver,
             ]);
 
-        // If token expired (401), refresh and retry once
-        if ($response->status() === 401) {
+        // If authentication error (HTTP 401 or errorCode 1501), refresh and retry once
+        if ($this->isAuthenticationError($response)) {
             $this->clearTokenCache();
             $this->refreshToken();
             
@@ -163,8 +168,8 @@ class AdaReachClient
                 'username' => $this->username,
             ]);
 
-        // If token expired (401), refresh and retry once
-        if ($response->status() === 401) {
+        // If authentication error (HTTP 401 or errorCode 1501), refresh and retry once
+        if ($this->isAuthenticationError($response)) {
             $this->clearTokenCache();
             $this->refreshToken();
             
@@ -236,6 +241,27 @@ class AdaReachClient
             'expires_at' => $expiresAt,
             'cached_at' => now(),
         ], $expiresAt);
+    }
+
+    /**
+     * Check if the response indicates an authentication error
+     * API returns HTTP 200 with errorCode: 1501 for invalid tokens
+     */
+    protected function isAuthenticationError($response): bool
+    {
+        // Check HTTP status code (401 Unauthorized)
+        if ($response->status() === 401) {
+            return true;
+        }
+
+        // Check errorCode in response body
+        // errorCode: 1501 = Invalid/expired token
+        $errorCode = $response->json('errorCode');
+        if ($errorCode === 1501) {
+            return true;
+        }
+
+        return false;
     }
 
     /**
