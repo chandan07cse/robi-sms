@@ -175,28 +175,30 @@ class SmsBuilder
     }
 
     /**
-     * Format MSISDN to 13-digit format
+     * Format MSISDN to 11-digit Bangladesh format (01XXXXXXXXX)
+     * AdaReach API expects local format, not international
      */
     protected function formatMsisdn(string $msisdn): string
     {
         // Remove any non-numeric characters
         $msisdn = preg_replace('/\D/', '', $msisdn);
 
-        // If starts with 880, ensure it's 13 digits
+        // If starts with 880, remove it and add 0
         if (str_starts_with($msisdn, '880')) {
-            return $msisdn;
+            return '0' . substr($msisdn, 3);  // 8801712345678 → 01712345678
         }
 
-        // If starts with 01, remove the 0 and prepend 880
+        // If starts with 01, it's already correct
         if (str_starts_with($msisdn, '01')) {
-            return '880' . substr($msisdn, 1);  // Remove leading 0
+            return $msisdn;  // 01712345678 → 01712345678
         }
 
-        // If starts with 1 (without 0), prepend 880
+        // If starts with 1 (without 0), prepend 0
         if (str_starts_with($msisdn, '1') && strlen($msisdn) == 10) {
-            return '880' . $msisdn;
+            return '0' . $msisdn;  // 1712345678 → 01712345678
         }
 
+        // Return as-is if already in correct format
         return $msisdn;
     }
 
