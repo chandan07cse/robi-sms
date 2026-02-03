@@ -1,28 +1,28 @@
 <template>
   <div class="page-container">
-    <div class="page-content space-y-6">
+    <div class="page-content space-y-4 sm:space-y-6">
       <!-- Header Section (matching other pages) -->
-      <div class="flex items-center justify-between">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
-          <h1 class="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
-            <div class="p-3 bg-primary-100 dark:bg-primary-900/30 rounded-xl">
-              <Send :size="28" class="text-primary-600 dark:text-primary-400" />
+          <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-2 sm:gap-3">
+            <div class="p-2 sm:p-3 bg-primary-100 dark:bg-primary-900/30 rounded-xl">
+              <Send :size="24" class="sm:w-7 sm:h-7 text-primary-600 dark:text-primary-400" />
             </div>
             Send SMS
           </h1>
-          <p class="text-gray-600 dark:text-gray-400 mt-2">
+          <p class="text-sm sm:text-base text-gray-600 dark:text-gray-400 mt-2">
             Compose and send SMS messages to single or multiple recipients
           </p>
         </div>
-        <div class="text-right">
-          <p class="text-sm text-gray-500">Messages sent today</p>
-          <p class="text-2xl font-bold text-primary-600">{{ todayCount }}</p>
+        <div class="text-left sm:text-right">
+          <p class="text-xs sm:text-sm text-gray-500">Messages sent today</p>
+          <p class="text-xl sm:text-2xl font-bold text-primary-600">{{ todayCount }}</p>
         </div>
       </div>
 
       <!-- Send SMS Form -->
-      <div class="card p-6">
-        <form @submit.prevent="sendSms" class="space-y-6">
+      <div class="card p-4 sm:p-6">
+        <form @submit.prevent="sendSms" class="space-y-4 sm:space-y-6">
           <!-- Phone Numbers Section -->
           <div>
             <label class="text-sm font-medium mb-2 flex items-center gap-2">
@@ -86,27 +86,27 @@
           </div>
 
           <!-- Cost Estimate -->
-          <div class="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-            <h4 class="font-semibold text-blue-900 dark:text-blue-100 mb-2 flex items-center gap-2">
+          <div class="p-3 sm:p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+            <h4 class="text-sm sm:text-base font-semibold text-blue-900 dark:text-blue-100 mb-3 flex items-center gap-2">
               <Sparkles :size="16" />
               Estimated Cost
             </h4>
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 text-sm">
               <div>
-                <p class="text-blue-600 dark:text-blue-400">Recipients</p>
-                <p class="text-lg font-bold text-blue-900 dark:text-blue-100">{{ phoneCount }}</p>
+                <p class="text-xs sm:text-sm text-blue-600 dark:text-blue-400">Recipients</p>
+                <p class="text-base sm:text-lg font-bold text-blue-900 dark:text-blue-100">{{ phoneCount }}</p>
               </div>
               <div>
-                <p class="text-blue-600 dark:text-blue-400">SMS Parts</p>
-                <p class="text-lg font-bold text-blue-900 dark:text-blue-100">{{ smsCount }}</p>
+                <p class="text-xs sm:text-sm text-blue-600 dark:text-blue-400">SMS Parts</p>
+                <p class="text-base sm:text-lg font-bold text-blue-900 dark:text-blue-100">{{ smsCount }}</p>
               </div>
               <div>
-                <p class="text-blue-600 dark:text-blue-400">Total Messages</p>
-                <p class="text-lg font-bold text-blue-900 dark:text-blue-100">{{ phoneCount * smsCount }}</p>
+                <p class="text-xs sm:text-sm text-blue-600 dark:text-blue-400">Total Messages</p>
+                <p class="text-base sm:text-lg font-bold text-blue-900 dark:text-blue-100">{{ phoneCount * smsCount }}</p>
               </div>
               <div>
-                <p class="text-blue-600 dark:text-blue-400">Est. Cost</p>
-                <p class="text-lg font-bold text-blue-900 dark:text-blue-100">
+                <p class="text-xs sm:text-sm text-blue-600 dark:text-blue-400">Est. Cost</p>
+                <p class="text-base sm:text-lg font-bold text-blue-900 dark:text-blue-100">
                   ~{{ (phoneCount * smsCount * 0.5).toFixed(2) }} BDT
                 </p>
               </div>
@@ -114,11 +114,11 @@
           </div>
 
           <!-- Action Buttons -->
-          <div class="flex items-center gap-4">
+          <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 sm:gap-4">
             <button 
               type="submit" 
               :disabled="sending || !isFormValid"
-              class="btn btn-primary btn-lg"
+              class="btn btn-primary btn-lg w-full sm:w-auto"
             >
               <Send :size="20" />
               {{ sending ? 'Sending...' : 'Send SMS Now' }}
@@ -126,7 +126,7 @@
             <button 
               type="button" 
               @click="resetForm"
-              class="btn btn-secondary btn-lg"
+              class="btn btn-secondary btn-lg w-full sm:w-auto"
               :disabled="sending"
             >
               <X :size="20" />

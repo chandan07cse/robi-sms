@@ -1,13 +1,13 @@
 <template>
   <div class="page-container">
-    <div class="page-content space-y-6">
+    <div class="page-content space-y-4 sm:space-y-6">
       <!-- <h2 class="text-2xl font-bold flex items-center gap-2">
         <LayoutDashboard :size="24" />
         Dashboard
       </h2> -->
       
       <!-- Stats Cards -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
       <StatCard
         v-for="stat in stats"
         :key="stat.label"
@@ -21,83 +21,85 @@
     </div>
 
     <!-- Credits -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <div class="card p-6">
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 lg:gap-6">
+      <div class="card p-4 sm:p-6">
         <div class="flex items-center justify-between mb-4">
-          <h3 class="text-lg font-semibold flex items-center gap-2">
+          <h3 class="text-base sm:text-lg font-semibold flex items-center gap-2">
             <Wallet :size="20" class="text-blue-500" />
-            GUI Balance
+            <span class="hidden sm:inline">GUI Balance</span>
+            <span class="sm:hidden">GUI</span>
           </h3>
           <button @click="refreshCredits" class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">
             <RefreshCw :size="16" :class="refreshing && 'animate-spin'" />
           </button>
         </div>
-        <p class="text-3xl font-bold text-blue-600 dark:text-blue-400">{{ credits.gui }}</p>
-        <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">SMS credits</p>
+        <p class="text-2xl sm:text-3xl font-bold text-blue-600 dark:text-blue-400">{{ credits.gui }}</p>
+        <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-2">SMS credits</p>
       </div>
 
-      <div class="card p-6">
+      <div class="card p-4 sm:p-6">
         <div class="flex items-center justify-between mb-4">
-          <h3 class="text-lg font-semibold flex items-center gap-2">
+          <h3 class="text-base sm:text-lg font-semibold flex items-center gap-2">
             <Cpu :size="20" class="text-purple-500" />
-            API Balance
+            <span class="hidden sm:inline">API Balance</span>
+            <span class="sm:hidden">API</span>
           </h3>
           <button @click="refreshCredits" class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">
             <RefreshCw :size="16" :class="refreshing && 'animate-spin'" />
           </button>
         </div>
-        <p class="text-3xl font-bold text-purple-600 dark:text-purple-400">{{ credits.api }}</p>
-        <p class="text-sm text-gray-500 dark:text-gray-400 mt-2">SMS credits</p>
+        <p class="text-2xl sm:text-3xl font-bold text-purple-600 dark:text-purple-400">{{ credits.api }}</p>
+        <p class="text-xs sm:text-sm text-gray-500 dark:text-gray-400 mt-2">SMS credits</p>
       </div>
     </div>
 
     <!-- Charts -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 lg:gap-6">
       <!-- Status Distribution -->
-      <div class="card p-6">
-        <h3 class="text-lg font-semibold mb-4">Status Distribution</h3>
-        <div class="h-64">
+      <div class="card p-4 sm:p-6">
+        <h3 class="text-base sm:text-lg font-semibold mb-4">Status Distribution</h3>
+        <div class="h-48 sm:h-64">
           <Doughnut :data="statusChartData" :options="chartOptions" />
         </div>
       </div>
 
       <!-- Daily Trend -->
-      <div class="card p-6">
-        <h3 class="text-lg font-semibold mb-4">Daily Trend (Last 7 Days)</h3>
-        <div class="h-64">
+      <div class="card p-4 sm:p-6">
+        <h3 class="text-base sm:text-lg font-semibold mb-4">Daily Trend (Last 7 Days)</h3>
+        <div class="h-48 sm:h-64">
           <Line :data="dailyChartData" :options="lineChartOptions" />
         </div>
       </div>
     </div>
 
     <!-- Recent SMS -->
-    <div class="card p-6">
+    <div class="card p-4 sm:p-6">
       <div class="flex items-center justify-between mb-4">
-        <h3 class="text-lg font-semibold">Recent SMS</h3>
-        <router-link to="/sms" class="text-primary-600 hover:text-primary-700 text-sm font-medium">
+        <h3 class="text-base sm:text-lg font-semibold">Recent SMS</h3>
+        <router-link to="/sms" class="text-primary-600 hover:text-primary-700 text-xs sm:text-sm font-medium">
           View All →
         </router-link>
       </div>
-      <div class="overflow-x-auto">
-        <table class="w-full">
+      <div class="overflow-x-auto -mx-4 sm:mx-0">
+        <table class="w-full min-w-[600px]">
           <thead class="bg-gray-50 dark:bg-gray-700">
             <tr>
-              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Phone</th>
-              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Message</th>
-              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Status</th>
-              <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Time</th>
+              <th class="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Phone</th>
+              <th class="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Message</th>
+              <th class="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Status</th>
+              <th class="px-3 sm:px-4 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Time</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
             <tr v-for="sms in recentSms" :key="sms.id" class="hover:bg-gray-50 dark:hover:bg-gray-700/50">
-              <td class="px-4 py-3 text-sm">{{ sms.phone }}</td>
-              <td class="px-4 py-3 text-sm">{{ truncate(sms.message, 50) }}</td>
-              <td class="px-4 py-3 text-sm">
+              <td class="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm">{{ sms.phone }}</td>
+              <td class="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm">{{ truncate(sms.message, 50) }}</td>
+              <td class="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm">
                 <span :class="['badge', `badge-${getStatusColor(sms.status)}`]">
                   {{ sms.status }}
                 </span>
               </td>
-              <td class="px-4 py-3 text-sm text-gray-500">{{ formatDate(sms.created_at) }}</td>
+              <td class="px-3 sm:px-4 py-2 sm:py-3 text-xs sm:text-sm text-gray-500">{{ formatDate(sms.created_at) }}</td>
             </tr>
           </tbody>
         </table>

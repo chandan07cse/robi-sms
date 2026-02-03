@@ -1,16 +1,47 @@
 <template>
   <div class="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-gray-900 dark:to-gray-800 w-full overflow-x-hidden">
+    <!-- Mobile Header -->
+    <div class="lg:hidden fixed top-0 left-0 right-0 z-50 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-3">
+      <div class="flex items-center justify-between">
+        <button @click="toggleSidebar" class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">
+          <Menu :size="24" />
+        </button>
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 bg-gradient-to-br from-primary-500 to-purple-600 rounded-lg flex items-center justify-center">
+            <MessageSquare :size="18" class="text-white" />
+          </div>
+          <h1 class="text-lg font-bold">SMS Dashboard</h1>
+        </div>
+        <button @click="toggleTheme" class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">
+          <Sun v-if="theme === 'dark'" :size="20" />
+          <Moon v-else :size="20" />
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile Overlay -->
+    <div 
+      v-if="sidebarOpen" 
+      @click="toggleSidebar"
+      class="lg:hidden fixed inset-0 bg-black/50 z-40"
+    ></div>
+
     <!-- Sidebar -->
     <aside :class="['sidebar', sidebarOpen ? 'translate-x-0' : '-translate-x-full']">
       <div class="p-6 border-b border-gray-200 dark:border-gray-700">
-        <div class="flex items-center gap-3">
-          <div class="w-10 h-10 bg-gradient-to-br from-primary-500 to-purple-600 rounded-lg flex items-center justify-center">
-            <MessageSquare :size="24" class="text-white" />
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-gradient-to-br from-primary-500 to-purple-600 rounded-lg flex items-center justify-center">
+              <MessageSquare :size="24" class="text-white" />
+            </div>
+            <div>
+              <h1 class="text-xl font-bold">SMS Dashboard</h1>
+              <p class="text-xs text-gray-500 dark:text-gray-400">AdaReach API</p>
+            </div>
           </div>
-          <div>
-            <h1 class="text-xl font-bold">SMS Dashboard</h1>
-            <p class="text-xs text-gray-500 dark:text-gray-400">AdaReach API</p>
-          </div>
+          <button @click="toggleSidebar" class="lg:hidden p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">
+            <Menu :size="20" />
+          </button>
         </div>
       </div>
 
@@ -20,6 +51,7 @@
           :key="item.name"
           :to="item.path"
           :class="['nav-item', $route.path === item.path && 'active']"
+          @click="closeSidebarOnMobile"
         >
           <component :is="item.icon" :size="20" />
           <span>{{ item.label }}</span>
@@ -45,7 +77,7 @@
     <!-- Main content -->
     <div class="main-content">
       <!-- Page content -->
-      <main class="p-6 min-h-screen max-h-screen overflow-y-auto">
+      <main class="p-3 sm:p-4 md:p-6 min-h-screen max-h-screen overflow-y-auto pt-16 lg:pt-6">
         <router-view :key="$route.fullPath" @update="handleUpdate" />
       </main>
     </div>
@@ -103,6 +135,12 @@ const pageTitle = computed(() => {
 
 function toggleSidebar() {
   sidebarOpen.value = !sidebarOpen.value;
+}
+
+function closeSidebarOnMobile() {
+  if (window.innerWidth < 1024) {
+    sidebarOpen.value = false;
+  }
 }
 
 function toggleTheme() {

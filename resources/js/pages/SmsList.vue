@@ -1,12 +1,12 @@
 <template>
   <div class="page-container">
-    <div class="page-content space-y-6">
+    <div class="page-content space-y-4 sm:space-y-6">
     <!-- Filters -->
-    <div class="card p-6">
-      <div class="grid grid-cols-1 md:grid-cols-5 gap-4">
+    <div class="card p-4 sm:p-6">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
         <div>
-          <label class="block text-sm font-medium mb-2">Status</label>
-          <select v-model="filters.status" class="input w-full">
+          <label class="block text-xs sm:text-sm font-medium mb-2">Status</label>
+          <select v-model="filters.status" class="input w-full text-sm">
             <option value="">All Status</option>
             <option value="delivered">Delivered</option>
             <option value="sent">Sent</option>
@@ -16,24 +16,24 @@
         </div>
 
         <div>
-          <label class="block text-sm font-medium mb-2">Phone Number</label>
-          <input v-model="filters.phone" type="text" placeholder="Search phone..." class="input w-full">
+          <label class="block text-xs sm:text-sm font-medium mb-2">Phone Number</label>
+          <input v-model="filters.phone" type="text" placeholder="Search phone..." class="input w-full text-sm">
         </div>
 
         <div>
-          <label class="block text-sm font-medium mb-2">Start Date</label>
-          <input v-model="filters.start_date" type="date" class="input w-full">
+          <label class="block text-xs sm:text-sm font-medium mb-2">Start Date</label>
+          <input v-model="filters.start_date" type="date" class="input w-full text-sm">
         </div>
 
         <div>
-          <label class="block text-sm font-medium mb-2">End Date</label>
-          <input v-model="filters.end_date" type="date" class="input w-full">
+          <label class="block text-xs sm:text-sm font-medium mb-2">End Date</label>
+          <input v-model="filters.end_date" type="date" class="input w-full text-sm">
         </div>
 
-        <div class="flex items-end gap-2">
-          <button @click="applyFilters" class="btn btn-primary flex-1">
+        <div class="flex items-end gap-2 sm:col-span-2 lg:col-span-1">
+          <button @click="applyFilters" class="btn btn-primary flex-1 text-sm">
             <Filter :size="16" />
-            Filter
+            <span class="hidden sm:inline">Filter</span>
           </button>
           <button @click="resetFilters" class="btn btn-secondary">
             <X :size="16" />
@@ -47,50 +47,50 @@
 
     <!-- SMS List -->
     <div class="card">
-      <div class="p-6 border-b border-gray-200 dark:border-gray-700">
+      <div class="p-4 sm:p-6 border-b border-gray-200 dark:border-gray-700">
         <div class="flex items-center justify-between">
-          <h2 class="text-xl font-bold">SMS Messages</h2>
-          <span class="text-sm text-gray-500">Total: {{ pagination.total }}</span>
+          <h2 class="text-lg sm:text-xl font-bold">SMS Messages</h2>
+          <span class="text-xs sm:text-sm text-gray-500">Total: {{ pagination.total }}</span>
         </div>
       </div>
 
-      <div class="overflow-x-auto">
-        <table class="w-full">
+      <div class="overflow-x-auto -mx-4 sm:mx-0">
+        <table class="w-full min-w-[800px]">
           <thead class="bg-gray-50 dark:bg-gray-700">
             <tr>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">ID</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Phone</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Sender</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Message</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Status</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Time</th>
-              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Actions</th>
+              <th class="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">ID</th>
+              <th class="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Phone</th>
+              <th class="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Sender</th>
+              <th class="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Message</th>
+              <th class="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Status</th>
+              <th class="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Time</th>
+              <th class="px-3 sm:px-6 py-2 sm:py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase">Actions</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
             <tr v-if="loading" v-for="i in 5" :key="i" class="animate-pulse">
-              <td class="px-6 py-4"><div class="h-4 bg-gray-200 dark:bg-gray-700 rounded"></div></td>
-              <td class="px-6 py-4"><div class="h-4 bg-gray-200 dark:bg-gray-700 rounded"></div></td>
-              <td class="px-6 py-4"><div class="h-4 bg-gray-200 dark:bg-gray-700 rounded"></div></td>
-              <td class="px-6 py-4"><div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-48"></div></td>
-              <td class="px-6 py-4"><div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-16"></div></td>
-              <td class="px-6 py-4"><div class="h-4 bg-gray-200 dark:bg-gray-700 rounded"></div></td>
-              <td class="px-6 py-4"><div class="h-4 bg-gray-200 dark:bg-gray-700 rounded"></div></td>
+              <td class="px-3 sm:px-6 py-3 sm:py-4"><div class="h-4 bg-gray-200 dark:bg-gray-700 rounded"></div></td>
+              <td class="px-3 sm:px-6 py-3 sm:py-4"><div class="h-4 bg-gray-200 dark:bg-gray-700 rounded"></div></td>
+              <td class="px-3 sm:px-6 py-3 sm:py-4"><div class="h-4 bg-gray-200 dark:bg-gray-700 rounded"></div></td>
+              <td class="px-3 sm:px-6 py-3 sm:py-4"><div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-48"></div></td>
+              <td class="px-3 sm:px-6 py-3 sm:py-4"><div class="h-4 bg-gray-200 dark:bg-gray-700 rounded w-16"></div></td>
+              <td class="px-3 sm:px-6 py-3 sm:py-4"><div class="h-4 bg-gray-200 dark:bg-gray-700 rounded"></div></td>
+              <td class="px-3 sm:px-6 py-3 sm:py-4"><div class="h-4 bg-gray-200 dark:bg-gray-700 rounded"></div></td>
             </tr>
 
             <tr v-else v-for="sms in smsList" :key="sms.id" class="hover:bg-gray-50 dark:hover:bg-gray-700/50">
-              <td class="px-6 py-4 text-sm font-mono text-gray-500">{{ sms.id.substring(0, 8) }}</td>
-              <td class="px-6 py-4 text-sm font-medium">{{ sms.phone }}</td>
-              <td class="px-6 py-4 text-sm">{{ sms.sender }}</td>
-              <td class="px-6 py-4 text-sm max-w-md truncate">{{ sms.message }}</td>
-              <td class="px-6 py-4 text-sm">
-                <span :class="['badge', `badge-${getStatusColor(sms.status)}`]">
+              <td class="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm font-mono text-gray-500">{{ sms.id.substring(0, 8) }}</td>
+              <td class="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm font-medium">{{ sms.phone }}</td>
+              <td class="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm">{{ sms.sender }}</td>
+              <td class="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm max-w-md truncate">{{ sms.message }}</td>
+              <td class="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm">
+                <span :class="['badge badge-sm', `badge-${getStatusColor(sms.status)}`]">
                   <component :is="getStatusIcon(sms.status)" :size="12" />
                   {{ sms.status }}
                 </span>
               </td>
-              <td class="px-6 py-4 text-sm text-gray-500">{{ formatDate(sms.created_at) }}</td>
-              <td class="px-6 py-4 text-sm">
+              <td class="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm text-gray-500">{{ formatDate(sms.created_at) }}</td>
+              <td class="px-3 sm:px-6 py-3 sm:py-4 text-xs sm:text-sm">
                 <div class="flex items-center gap-2">
                   <button @click="viewDetails(sms.id)" class="p-1 hover:bg-gray-100 dark:hover:bg-gray-600 rounded">
                     <Eye :size="16" />

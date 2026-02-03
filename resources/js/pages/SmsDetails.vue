@@ -5,78 +5,78 @@
         <div class="loading-spinner w-12 h-12"></div>
       </div>
 
-      <div v-else-if="sms" class="space-y-6">
+      <div v-else-if="sms" class="space-y-4 sm:space-y-6">
         <!-- Header -->
-        <div class="flex items-center gap-4">
+        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
       <button @click="goBack" class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">
-        <ArrowLeft :size="24" />
+        <ArrowLeft :size="20" class="sm:w-6 sm:h-6" />
       </button>
       <div class="flex-1">
-        <h2 class="text-2xl font-bold">SMS Details</h2>
-        <p class="text-sm text-gray-500">ID: {{ sms.id }}</p>
+        <h2 class="text-xl sm:text-2xl font-bold">SMS Details</h2>
+        <p class="text-xs sm:text-sm text-gray-500">ID: {{ sms.id }}</p>
       </div>
-      <span :class="['badge text-base px-4 py-2', `badge-${getStatusColor(sms.status)}`]">
-        <component :is="getStatusIcon(sms.status)" :size="16" />
+      <span :class="['badge text-sm sm:text-base px-3 sm:px-4 py-2', `badge-${getStatusColor(sms.status)}`]">
+        <component :is="getStatusIcon(sms.status)" :size="14" class="sm:w-4 sm:h-4" />
         {{ sms.status }}
       </span>
     </div>
 
     <!-- Main Info -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-      <div class="lg:col-span-2 card p-6 space-y-6">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
+      <div class="lg:col-span-2 card p-4 sm:p-6 space-y-4 sm:space-y-6">
         <div>
-          <h3 class="text-lg font-semibold mb-4">Message Content</h3>
-          <div class="bg-gray-50 dark:bg-gray-900 rounded-lg p-4">
-            <p class="whitespace-pre-wrap">{{ sms.message }}</p>
+          <h3 class="text-base sm:text-lg font-semibold mb-4">Message Content</h3>
+          <div class="bg-gray-50 dark:bg-gray-900 rounded-lg p-3 sm:p-4">
+            <p class="whitespace-pre-wrap text-sm sm:text-base">{{ sms.message }}</p>
           </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-4">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
           <div>
-            <label class="text-sm font-medium text-gray-500">Phone Number</label>
-            <p class="mt-1 text-lg font-medium flex items-center gap-2">
-              <Phone :size="16" />
+            <label class="text-xs sm:text-sm font-medium text-gray-500">Phone Number</label>
+            <p class="mt-1 text-base sm:text-lg font-medium flex items-center gap-2">
+              <Phone :size="14" class="sm:w-4 sm:h-4" />
               {{ sms.phone }}
             </p>
           </div>
 
           <div>
-            <label class="text-sm font-medium text-gray-500">Sender ID</label>
-            <p class="mt-1 text-lg font-medium">{{ sms.sender }}</p>
+            <label class="text-xs sm:text-sm font-medium text-gray-500">Sender ID</label>
+            <p class="mt-1 text-base sm:text-lg font-medium">{{ sms.sender }}</p>
           </div>
 
           <div>
-            <label class="text-sm font-medium text-gray-500">Message Type</label>
-            <p class="mt-1 text-lg font-medium capitalize">{{ sms.type || 'Plain' }}</p>
+            <label class="text-xs sm:text-sm font-medium text-gray-500">Message Type</label>
+            <p class="mt-1 text-base sm:text-lg font-medium capitalize">{{ sms.type || 'Plain' }}</p>
           </div>
 
           <div>
-            <label class="text-sm font-medium text-gray-500">Character Count</label>
-            <p class="mt-1 text-lg font-medium">{{ sms.message?.length || 0 }}</p>
+            <label class="text-xs sm:text-sm font-medium text-gray-500">Character Count</label>
+            <p class="mt-1 text-base sm:text-lg font-medium">{{ sms.message?.length || 0 }}</p>
           </div>
         </div>
 
-        <div v-if="sms.error_message" class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-4">
-          <h4 class="font-medium text-red-800 dark:text-red-300 mb-2">Error Message</h4>
-          <p class="text-red-600 dark:text-red-400">{{ sms.error_message }}</p>
+        <div v-if="sms.error_message" class="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg p-3 sm:p-4">
+          <h4 class="text-sm sm:text-base font-medium text-red-800 dark:text-red-300 mb-2">Error Message</h4>
+          <p class="text-sm text-red-600 dark:text-red-400">{{ sms.error_message }}</p>
         </div>
 
         <div v-if="sms.status === 'failed'" class="flex gap-2">
-          <button @click="retrySms" class="btn btn-primary">
+          <button @click="retrySms" class="btn btn-primary w-full sm:w-auto">
             <RefreshCw :size="16" />
             Retry SMS
           </button>
         </div>
       </div>
 
-      <div class="space-y-6">
+      <div class="space-y-4 sm:space-y-6">
         <!-- Timeline -->
-        <div class="card p-6">
-          <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
-            <Clock :size="20" />
+        <div class="card p-4 sm:p-6">
+          <h3 class="text-base sm:text-lg font-semibold mb-4 flex items-center gap-2">
+            <Clock :size="18" class="sm:w-5 sm:h-5" />
             Timeline
           </h3>
-          <div class="space-y-4">
+          <div class="space-y-3 sm:space-y-4">
             <div class="flex gap-3">
               <div class="w-2 h-2 rounded-full bg-blue-500 mt-2"></div>
               <div class="flex-1">

@@ -1,52 +1,52 @@
 <template>
   <div class="page-container">
-    <div class="page-content space-y-6">
-      <div class="card p-6">
+    <div class="page-content space-y-4 sm:space-y-6">
+      <div class="card p-4 sm:p-6">
         <!-- API Configuration -->
-        <div class="mb-8">
-          <h3 class="text-lg font-semibold mb-4 flex items-center gap-2">
+        <div class="mb-6 sm:mb-8">
+          <h3 class="text-base sm:text-lg font-semibold mb-4 flex items-center gap-2">
             <Settings2 :size="20" />
             API Configuration
           </h3>
           <div class="space-y-4">
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
               <div>
-                <label class="block text-sm font-medium mb-2">API Username</label>
+                <label class="block text-xs sm:text-sm font-medium mb-2">API Username</label>
                 <input 
                   v-model="settings.api_username" 
                   type="text" 
-                  class="input w-full" 
+                  class="input w-full text-sm sm:text-base" 
                   placeholder="Your API username"
                   :disabled="!editMode"
                 >
               </div>
               <div>
-                <label class="block text-sm font-medium mb-2">API Password</label>
+                <label class="block text-xs sm:text-sm font-medium mb-2">API Password</label>
                 <input 
                   v-model="settings.api_password" 
                   type="password" 
-                  class="input w-full" 
+                  class="input w-full text-sm sm:text-base" 
                   placeholder="Your API password"
                   :disabled="!editMode"
                 >
                 <p class="text-xs text-gray-500 mt-1">Leave empty to keep current password</p>
               </div>
               <div>
-                <label class="block text-sm font-medium mb-2">Default Sender ID</label>
+                <label class="block text-xs sm:text-sm font-medium mb-2">Default Sender ID</label>
                 <input 
                   v-model="settings.default_sender" 
                   type="text" 
-                  class="input w-full" 
+                  class="input w-full text-sm sm:text-base" 
                   placeholder="e.g., 880XXXXXXXXXX"
                   :disabled="!editMode"
                 >
               </div>
               <div>
-                <label class="block text-sm font-medium mb-2">API Base URL</label>
+                <label class="block text-xs sm:text-sm font-medium mb-2">API Base URL</label>
                 <input 
                   v-model="settings.api_base_url" 
                   type="text" 
-                  class="input w-full" 
+                  class="input w-full text-sm sm:text-base" 
                   placeholder="https://api.mobireach.com.bd"
                   :disabled="!editMode"
                 >
@@ -54,11 +54,11 @@
             </div>
             
             <!-- Action Buttons -->
-            <div class="flex gap-3 mt-6">
+            <div class="flex flex-col sm:flex-row gap-2 sm:gap-3 mt-6">
               <button 
                 v-if="!editMode"
                 @click="editMode = true" 
-                class="btn btn-primary"
+                class="btn btn-primary w-full sm:w-auto"
               >
                 <Edit :size="16" />
                 Edit Settings
@@ -66,7 +66,7 @@
               <template v-else>
                 <button 
                   @click="saveSettings" 
-                  class="btn btn-primary"
+                  class="btn btn-primary w-full sm:w-auto"
                   :disabled="saving"
                 >
                   <Save :size="16" />
@@ -74,7 +74,7 @@
                 </button>
                 <button 
                   @click="cancelEdit" 
-                  class="btn btn-secondary"
+                  class="btn btn-secondary w-full sm:w-auto"
                   :disabled="saving"
                 >
                   <X :size="16" />
@@ -83,7 +83,7 @@
               </template>
               <button 
                 @click="testConnection" 
-                class="btn btn-secondary"
+                class="btn btn-secondary w-full sm:w-auto"
                 :disabled="testing"
               >
                 <Zap :size="16" />
@@ -92,12 +92,12 @@
             </div>
 
             <!-- Connection Status -->
-            <div v-if="connectionStatus" class="mt-4 p-4 rounded-lg" :class="{
+            <div v-if="connectionStatus" class="mt-4 p-3 sm:p-4 rounded-lg text-sm" :class="{
               'bg-green-50 dark:bg-green-900/20 text-green-800 dark:text-green-200': connectionStatus.success,
               'bg-red-50 dark:bg-red-900/20 text-red-800 dark:text-red-200': !connectionStatus.success
             }">
               <p class="font-medium">{{ connectionStatus.message }}</p>
-              <div v-if="connectionStatus.success && connectionStatus.balance" class="mt-2 text-sm">
+              <div v-if="connectionStatus.success && connectionStatus.balance" class="mt-2 text-xs sm:text-sm">
                 <p>GUI Balance: {{ connectionStatus.balance.guiBalance }} BDT</p>
                 <p>API Balance: {{ connectionStatus.balance.apiBalance }} BDT</p>
               </div>

@@ -1,18 +1,18 @@
 <template>
   <div class="page-container">
-    <div class="page-content space-y-6">
+    <div class="page-content space-y-4 sm:space-y-6">
       <!-- <h2 class="text-2xl font-bold">Analytics</h2> -->
 
       <!-- Period Selector -->
-      <div class="card p-4">
-      <div class="flex items-center gap-4">
-        <label class="font-medium">Period:</label>
-        <div class="flex gap-2">
+      <div class="card p-3 sm:p-4">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
+        <label class="text-sm sm:text-base font-medium">Period:</label>
+        <div class="flex flex-wrap gap-2 w-full sm:w-auto">
           <button
             v-for="period in periods"
             :key="period.value"
             @click="selectedPeriod = period.value"
-            :class="['px-4 py-2 rounded-lg transition-all', selectedPeriod === period.value ? 'bg-primary-600 text-white' : 'bg-gray-200 dark:bg-gray-700']"
+            :class="['px-3 sm:px-4 py-2 rounded-lg text-sm sm:text-base transition-all flex-1 sm:flex-none', selectedPeriod === period.value ? 'bg-primary-600 text-white' : 'bg-gray-200 dark:bg-gray-700']"
           >
             {{ period.label }}
           </button>
@@ -21,58 +21,58 @@
     </div>
 
     <!-- Key Metrics -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-      <div class="card p-6">
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 lg:gap-6">
+      <div class="card p-4 sm:p-6">
         <div class="flex items-center justify-between mb-2">
-          <h3 class="text-sm font-medium text-gray-500">Success Rate</h3>
-          <TrendingUp :size="20" class="text-green-500" />
+          <h3 class="text-xs sm:text-sm font-medium text-gray-500">Success Rate</h3>
+          <TrendingUp :size="18" class="sm:w-5 sm:h-5 text-green-500" />
         </div>
-        <p class="text-3xl font-bold text-green-600">{{ successRate }}%</p>
+        <p class="text-xl sm:text-2xl lg:text-3xl font-bold text-green-600">{{ successRate }}%</p>
         <p class="text-xs text-gray-500 mt-1">Delivery success</p>
       </div>
 
-      <div class="card p-6">
+      <div class="card p-4 sm:p-6">
         <div class="flex items-center justify-between mb-2">
-          <h3 class="text-sm font-medium text-gray-500">Failure Rate</h3>
-          <TrendingDown :size="20" class="text-red-500" />
+          <h3 class="text-xs sm:text-sm font-medium text-gray-500">Failure Rate</h3>
+          <TrendingDown :size="18" class="sm:w-5 sm:h-5 text-red-500" />
         </div>
-        <p class="text-3xl font-bold text-red-600">{{ failureRate }}%</p>
+        <p class="text-xl sm:text-2xl lg:text-3xl font-bold text-red-600">{{ failureRate }}%</p>
         <p class="text-xs text-gray-500 mt-1">Failed deliveries</p>
       </div>
 
-      <div class="card p-6">
+      <div class="card p-4 sm:p-6">
         <div class="flex items-center justify-between mb-2">
-          <h3 class="text-sm font-medium text-gray-500">Avg Response Time</h3>
-          <Clock :size="20" class="text-blue-500" />
+          <h3 class="text-xs sm:text-sm font-medium text-gray-500">Avg Response</h3>
+          <Clock :size="18" class="sm:w-5 sm:h-5 text-blue-500" />
         </div>
-        <p class="text-3xl font-bold text-blue-600">{{ avgResponseTime }}</p>
+        <p class="text-xl sm:text-2xl lg:text-3xl font-bold text-blue-600">{{ avgResponseTime }}</p>
         <p class="text-xs text-gray-500 mt-1">API response</p>
       </div>
 
-      <div class="card p-6">
+      <div class="card p-4 sm:p-6">
         <div class="flex items-center justify-between mb-2">
-          <h3 class="text-sm font-medium text-gray-500">Peak Hour</h3>
-          <Activity :size="20" class="text-purple-500" />
+          <h3 class="text-xs sm:text-sm font-medium text-gray-500">Peak Hour</h3>
+          <Activity :size="18" class="sm:w-5 sm:h-5 text-purple-500" />
         </div>
-        <p class="text-3xl font-bold text-purple-600">{{ peakHour }}</p>
+        <p class="text-xl sm:text-2xl lg:text-3xl font-bold text-purple-600">{{ peakHour }}</p>
         <p class="text-xs text-gray-500 mt-1">Highest traffic</p>
       </div>
     </div>
 
     <!-- Charts Grid -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
       <!-- Volume Trend -->
-      <div class="card p-6">
-        <h3 class="text-lg font-semibold mb-4">SMS Volume Trend</h3>
-        <div class="h-80">
+      <div class="card p-4 sm:p-6">
+        <h3 class="text-base sm:text-lg font-semibold mb-4">SMS Volume Trend</h3>
+        <div class="h-64 sm:h-80">
           <Line :data="volumeTrendData" :options="lineOptions" />
         </div>
       </div>
 
       <!-- Status Distribution -->
-      <div class="card p-6">
-        <h3 class="text-lg font-semibold mb-4">Status Distribution</h3>
-        <div class="h-80">
+      <div class="card p-4 sm:p-6">
+        <h3 class="text-base sm:text-lg font-semibold mb-4">Status Distribution</h3>
+        <div class="h-64 sm:h-80">
           <Doughnut :data="statusDistribution" :options="doughnutOptions" />
         </div>
       </div>
