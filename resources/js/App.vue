@@ -3,9 +3,6 @@
     <!-- Mobile Header -->
     <div class="lg:hidden fixed top-0 left-0 right-0 z-50 bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-3">
       <div class="flex items-center justify-between">
-        <button @click="toggleSidebar" class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">
-          <Menu :size="24" />
-        </button>
         <div class="flex items-center gap-2">
           <div class="w-8 h-8 bg-gradient-to-br from-primary-500 to-purple-600 rounded-lg flex items-center justify-center">
             <MessageSquare :size="18" class="text-white" />
