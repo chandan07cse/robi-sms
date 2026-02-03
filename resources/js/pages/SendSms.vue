@@ -32,7 +32,7 @@
             <textarea 
               v-model="form.phone" 
               class="input w-full" 
-              rows="3"
+              rows="5"
               placeholder="Enter phone numbers (comma-separated for bulk)&#10;Examples:&#10;  • Single: 01712345678&#10;  • Multiple: 01712345678, 01887654321, 01965432100"
               required
             ></textarea>
