@@ -96,7 +96,6 @@ class AdaReachClient
             ->post("{$this->baseUrl}/sms/send", $params);
 
         $responseTime = microtime(true) - $startTime;
-
         // Check for authentication error (HTTP 401 or errorCode 1501)
         // Do NOT retry to prevent duplicate SMS sends
         if ($this->isAuthenticationError($response)) {
