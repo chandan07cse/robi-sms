@@ -15,7 +15,6 @@
         </button>
       </div>
     </div>
-
     <!-- Mobile Overlay -->
     <div 
       v-if="sidebarOpen" 
