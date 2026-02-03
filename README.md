@@ -5,19 +5,16 @@
 [![License](https://img.shields.io/packagist/l/chandan07cse/robi-sms.svg?style=flat-square)](https://packagist.org/packages/chandan07cse/robi-sms)
 [![PHP Version](https://img.shields.io/packagist/php-v/chandan07cse/robi-sms.svg?style=flat-square)](https://packagist.org/packages/chandan07cse/robi-sms)
 
-A comprehensive PHP package for integrating with **AdaReach (Robi/MobiReach) Business SMS API**. Works with **Laravel** or as a **standalone PHP library** (PHP 7.4+).
+A comprehensive PHP package for integrating with **AdaReach (Robi/MobiReach) Business SMS API**. Works seamlessly with **Laravel** or as a **standalone PHP library** (PHP 7.4+).
 
 ---
 
 ## 📑 Table of Contents
 
-- [Quick Start](#-quick-start)
 - [Features](#-features)
 - [Requirements](#-requirements)
-- [Installation](#-installation)
-- [Dashboard Setup](#-dashboard-setup)
-- [Standalone Usage](#-standalone-usage-no-laravel)
-- [Laravel Integration](#-laravel-integration)
+- [Laravel Installation](#-laravel-installation)
+- [Standalone Installation](#-standalone-installation-without-laravel)
 - [Phone Number Formats](#-phone-number-formats)
 - [Bangla/Unicode SMS](#-banglaunicode-sms)
 - [API Reference](#-api-reference)
@@ -25,47 +22,6 @@ A comprehensive PHP package for integrating with **AdaReach (Robi/MobiReach) Bus
 - [Troubleshooting](#-troubleshooting)
 - [Changelog](#-changelog)
 - [License](#-license)
-
----
-
-## ⚡ Quick Start
-
-### Installation
-
-```bash
-composer require chandan07cse/robi-sms
-```
-
-### Dashboard Access (1 Line Setup)
-
-Add to your `index.php` or main routing file:
-
-```php
-require __DIR__ . '/vendor/chandan07cse/robi-sms/routes/sms-dashboard.php';
-```
-
-✅ **Done!** Visit: `http://yoursite.com/sms-dashboard`
-
-### Send SMS (Standalone PHP)
-
-```php
-<?php
-require 'vendor/autoload.php';
-
-use AdaReach\Sms\StandaloneClient;
-
-$client = new StandaloneClient('username', 'password', 'SenderID');
-
-// Phone auto-normalized (01XXX → 880XXX)
-$response = $client->sendSms('01703611094', 'Hello!');
-
-// Bangla SMS (Unicode auto-detected)
-$response = $client->sendSms('01703611094', 'হ্যালো বাংলা!');
-
-// Check balance
-$balance = $client->getBalance();
-echo "Balance: " . $balance . " BDT";
-```
 
 ---
 
@@ -101,108 +57,105 @@ echo "Balance: " . $balance . " BDT";
 
 ## 📋 Requirements
 
-### For Standalone Usage (Recommended)
-- PHP 7.4 or higher (PHP 7.4, 8.0, 8.1, 8.2, 8.3)
-- cURL extension
-- JSON extension
-- Composer
-
-### For Laravel Integration
+### Laravel Requirements
 - PHP 8.1 or higher
 - Laravel 10.x or 11.x
 - MySQL/PostgreSQL database
 - Redis (optional, for caching)
 - Node.js 16+ (for dashboard assets)
 
+### Standalone Requirements
+- PHP 7.4 or higher (PHP 7.4, 8.0, 8.1, 8.2, 8.3)
+- cURL extension
+- JSON extension
+- Composer
+
 ---
 
-## 📦 Installation
+## 🎯 Laravel Installation
 
-Install via Composer:
+Perfect for Laravel applications with full dashboard, analytics, and database integration.
+
+### Step 1: Install Package
 
 ```bash
 composer require chandan07cse/robi-sms
 ```
 
-After installation, you'll see:
-
-```
-✅ AdaReach SMS Package Installed!
-
-🚀 Quick Setup (1 line):
-   Add to your index.php:
-   require __DIR__ . "/vendor/chandan07cse/robi-sms/routes/sms-dashboard.php";
-
-   Then visit: http://yoursite.com/sms-dashboard
-```
-
----
-
-## 🖥️ Dashboard Setup
-
-### Option 1: Include Route File (Easiest - Recommended)
-
-Add ONE line to your `index.php` or main routing file:
-
-```php
-require __DIR__ . '/vendor/chandan07cse/robi-sms/routes/sms-dashboard.php';
-```
-
-**Access:** `http://yoursite.com/sms-dashboard`
-
-### Option 2: Using .htaccess (Apache)
-
-Create or edit `.htaccess` in your project root:
-
-```apache
-RewriteEngine On
-RewriteRule ^sms-dashboard$ vendor/chandan07cse/robi-sms/public/sms-dashboard.php [L]
-```
-
-### Option 3: Using Nginx
-
-Add to your nginx config:
-
-```nginx
-location /sms-dashboard {
-    rewrite ^/sms-dashboard$ /vendor/chandan07cse/robi-sms/public/sms-dashboard.php last;
-}
-```
-
-### Option 4: Copy to Public Directory
+### Step 2: Publish Configuration & Assets
 
 ```bash
-cp vendor/chandan07cse/robi-sms/public/sms-dashboard.php public/
+# Publish config, migrations, and assets
+php artisan vendor:publish --provider="AdaReach\Sms\AdaReachServiceProvider"
+
+# Run migrations
+php artisan migrate
+
+# Build dashboard assets (optional)
+npm install && npm run build
 ```
 
-**Access:** `http://yoursite.com/sms-dashboard.php`
+### Step 3: Configure Environment
 
-### Option 5: PHP Built-in Server (Development)
-
-```bash
-cd vendor/chandan07cse/robi-sms/public
-php -S localhost:8080 sms-dashboard.php
-```
-
-**Access:** `http://localhost:8080`
-
-### Environment Configuration
-
-Create a `.env` file in your project root:
+Add these to your `.env` file:
 
 ```env
 ADAREARCH_USERNAME=your_username
 ADAREARCH_PASSWORD=your_password
+ADAREARCH_BASE_URL=https://api.mobireach.com.bd
 ADAREARCH_DEFAULT_SENDER=8801XXXXXXXXX
 ```
 
+### Step 4: Usage in Laravel
+
+```php
+use AdaReach\Sms\Facades\AdaReach;
+
+// Send single SMS
+$response = AdaReach::sendSms('01703611094', 'Hello from Laravel!');
+
+// Send bulk SMS
+$response = AdaReach::sendBulkSms(
+    ['01703611094', '01812345678'],
+    'Bulk message'
+);
+
+// Check balance
+$balance = AdaReach::getBalance();
+
+// Get account info
+$info = AdaReach::getAccountInfo();
+```
+
+### Step 5: Access Dashboard
+
+Visit your Laravel SMS dashboard:
+
+```
+http://your-laravel-app.test/adarearch/dashboard
+```
+
+**Dashboard Features:**
+- 📊 Real-time analytics & statistics
+- 📱 Send single & bulk SMS
+- 💰 Balance monitoring
+- 📈 Message history & tracking
+- 🔐 Credential management
+- 📄 Export message logs
+
 ---
 
-## 🚀 Standalone Usage (No Laravel)
+## 🚀 Standalone Installation (Without Laravel)
 
-Use the package in any PHP 7.4+ project without Laravel.
+Perfect for plain PHP projects, WordPress, custom frameworks, or any PHP 7.4+ application.
 
-### Basic Usage
+### Step 1: Install via Composer
+
+```bash
+composer require chandan07cse/robi-sms
+```
+
+### Step 2: Basic Setup
 
 ```php
 <?php
@@ -222,10 +175,10 @@ try {
     $response = $client->sendSms('01703611094', 'Hello from PHP!');
     
     if ($response['status'] === 'SUCCESS') {
-        echo "SMS sent! Message ID: " . $response['id'];
+        echo "✅ SMS sent! Message ID: " . $response['id'];
     }
 } catch (Exception $e) {
-    echo "Error: " . $e->getMessage();
+    echo "❌ Error: " . $e->getMessage();
 }
 ```
 
@@ -238,14 +191,17 @@ $message = 'Hello everyone!';
 $response = $client->sendBulkSms($phones, $message);
 
 echo "Sent to " . count($response['successful']) . " numbers";
+foreach ($response['failed'] as $failed) {
+    echo "Failed: {$failed['phone']} - {$failed['error']}\n";
+}
 ```
 
 ### Check Balance
 
 ```php
-// Get balance
+// Get current balance
 $balance = $client->getBalance();
-echo "Current balance: {$balance} BDT";
+echo "Current balance: {$balance} BDT\n";
 
 // Get detailed account info
 $accountInfo = $client->getAccountInfo();
@@ -264,60 +220,52 @@ $client = new StandaloneClient(
 );
 
 // Change sender ID dynamically
-$client->setSender('NewSender');
+$client->setSender('NewSenderID');
 
 // Get current sender
 $currentSender = $client->getSender();
 ```
 
----
+### Dashboard Setup (Optional)
 
-## 🎯 Laravel Integration
+Add ONE line to your `index.php` or routing file:
 
-### Install Package
-
-```bash
-composer require chandan07cse/robi-sms
+```php
+require __DIR__ . '/vendor/chandan07cse/robi-sms/routes/sms-dashboard.php';
 ```
 
-### Publish Configuration
+Then visit: `http://yoursite.com/sms-dashboard`
 
-```bash
-php artisan vendor:publish --provider="AdaReach\Sms\AdaReachServiceProvider"
+**Alternative Methods:**
+
+**Using .htaccess (Apache):**
+```apache
+RewriteEngine On
+RewriteRule ^sms-dashboard$ vendor/chandan07cse/robi-sms/public/sms-dashboard.php [L]
 ```
 
-### Configure Environment
+**Using Nginx:**
+```nginx
+location /sms-dashboard {
+    rewrite ^/sms-dashboard$ /vendor/chandan07cse/robi-sms/public/sms-dashboard.php last;
+}
+```
 
-Add to your `.env`:
+**PHP Built-in Server (Development):**
+```bash
+cd vendor/chandan07cse/robi-sms/public
+php -S localhost:8080 sms-dashboard.php
+```
+
+**Environment Configuration:**
+
+Create `.env` file in your project root:
 
 ```env
 ADAREARCH_USERNAME=your_username
 ADAREARCH_PASSWORD=your_password
-ADAREARCH_BASE_URL=https://api.mobireach.com.bd
 ADAREARCH_DEFAULT_SENDER=8801XXXXXXXXX
 ```
-
-### Usage in Laravel
-
-```php
-use AdaReach\Sms\Facades\AdaReach;
-
-// Send SMS
-$response = AdaReach::sendSms('01703611094', 'Hello from Laravel!');
-
-// Send bulk SMS
-$response = AdaReach::sendBulkSms(
-    ['01703611094', '01812345678'],
-    'Bulk message'
-);
-
-// Check balance
-$balance = AdaReach::getBalance();
-```
-
-### Access Dashboard
-
-Visit: `http://your-laravel-app.test/adarearch/dashboard`
 
 ---
 
