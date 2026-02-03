@@ -9,12 +9,12 @@
           </div>
           <h1 class="text-lg font-bold">SMS Dashboard</h1>
         </div>
-        <button @click="toggleTheme" class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">
-          <Sun v-if="theme === 'dark'" :size="20" />
-          <Moon v-else :size="20" />
+        <button @click="toggleSidebar" class="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg">
+          <Menu :size="24" />
         </button>
       </div>
     </div>
+
     <!-- Mobile Overlay -->
     <div 
       v-if="sidebarOpen" 
