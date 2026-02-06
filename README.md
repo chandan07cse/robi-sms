@@ -132,7 +132,7 @@ $info = AdaReach::getAccountInfo();
 Visit your Laravel SMS dashboard:
 
 ```
-http://your-laravel-app.test/adarearch/dashboard
+http://your-laravel-app.test/sms-dashboard
 ```
 
 **Dashboard Features:**
