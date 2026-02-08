@@ -189,11 +189,65 @@ class StandaloneClient
 
     /**
      * Ensure we have a valid token
+     * Validates token by making a balance check call to verify it's actually working
      */
     protected function ensureValidToken()
     {
         if (!$this->token) {
             $this->generateToken();
+            return;
+        }
+
+        // Check if cached token has expired
+        $cacheFile = $this->getCacheFilePath();
+        if (file_exists($cacheFile)) {
+            $data = json_decode(file_get_contents($cacheFile), true);
+            if ($data && isset($data['expires_at']) && $data['expires_at'] < time()) {
+                // Token expired, regenerate
+                $this->clearCache();
+                $this->generateToken();
+                return;
+            }
+        }
+
+        // Validate token via balance check (lightweight API call)
+        if (!$this->validateTokenViaBalanceCheck()) {
+            $this->clearCache();
+            if ($this->refreshToken) {
+                $this->refreshToken();
+            } else {
+                $this->generateToken();
+            }
+        }
+    }
+
+    /**
+     * Validate token by making a balance check call
+     * This ensures the token is actually valid on the API server
+     *
+     * @return bool True if token is valid
+     */
+    protected function validateTokenViaBalanceCheck()
+    {
+        try {
+            $response = $this->makeRequest('GET', '/balance', null, [
+                'Authorization: Bearer ' . $this->token
+            ]);
+
+            // Token is invalid if we get auth error (errorCode 1501)
+            if (isset($response['errorCode']) && $response['errorCode'] === 1501) {
+                return false;
+            }
+
+            // Token is invalid if we got an error response
+            if (isset($response['error']) && $response['error'] === true) {
+                return false;
+            }
+
+            return true;
+        } catch (\Exception $e) {
+            // On network error, assume token is still valid to avoid unnecessary re-auth
+            return true;
         }
     }
 

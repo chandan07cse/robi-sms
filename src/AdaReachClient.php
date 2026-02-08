@@ -194,6 +194,7 @@ class AdaReachClient
 
     /**
      * Ensure we have a valid token
+     * Validates token by making a balance check call to verify it's actually working
      */
     protected function ensureValidToken(): void
     {
@@ -223,6 +224,43 @@ class AdaReachClient
             } else {
                 $this->generateToken();
             }
+            return;
+        }
+
+        // Validate token via balance check (lightweight API call)
+        if (!$this->validateTokenViaBalanceCheck()) {
+            $this->clearTokenCache();
+            if ($this->refreshToken) {
+                $this->refreshToken();
+            } else {
+                $this->generateToken();
+            }
+        }
+    }
+
+    /**
+     * Validate token by making a balance check call
+     * This ensures the token is actually valid on the API server
+     *
+     * @return bool True if token is valid
+     */
+    protected function validateTokenViaBalanceCheck(): bool
+    {
+        try {
+            $response = Http::withToken($this->token)
+                ->get("{$this->baseUrl}/balance", [
+                    'username' => $this->username,
+                ]);
+
+            // Token is invalid if we get auth error
+            if ($this->isAuthenticationError($response)) {
+                return false;
+            }
+
+            return !$response->failed();
+        } catch (\Exception $e) {
+            // On network error, assume token is still valid to avoid unnecessary re-auth
+            return true;
         }
     }
 
